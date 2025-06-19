@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://deucpxt1oo03y"]
+
+[ext_resource type="Script" path="res://word_button.gd" id="1_6lrsh"]
+[ext_resource type="Curve" uid="uid://bu12tcgbprurd" path="res://Assets/curveA.tres" id="2_iqcyv"]
+
+[node name="Button" type="RichTextLabel" node_paths=PackedStringArray("buttonHandle")]
+custom_minimum_size = Vector2(0, 40)
+offset_right = 60.0
+offset_bottom = 40.0
+size_flags_vertical = 4
+mouse_filter = 2
+bbcode_enabled = true
+text = "WORD"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+shortcut_keys_enabled = false
+script = ExtResource("1_6lrsh")
+buttonHandle = NodePath(".")
+fadeCurve = ExtResource("2_iqcyv")
+
+[node name="WordButton" type="Button" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+
+[connection signal="pressed" from="WordButton" to="." method="OnClicked"]

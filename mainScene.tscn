@@ -1,0 +1,108 @@
+[gd_scene load_steps=8 format=3 uid="uid://bfflx0l6wr1es"]
+
+[ext_resource type="Script" path="res://story_manager.gd" id="1_fo1y6"]
+[ext_resource type="Script" path="res://textManager.gd" id="1_vfj14"]
+[ext_resource type="PackedScene" uid="uid://deucpxt1oo03y" path="res://word_button.tscn" id="2_7wh3j"]
+[ext_resource type="Script" path="res://inventory_manager.gd" id="2_31r86"]
+[ext_resource type="Script" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
+[ext_resource type="JSON" uid="uid://88jlh1gyu33o" path="res://Assets/TestStory2.json" id="3_0m1tv"]
+[ext_resource type="Script" path="res://command_manager.gd" id="4_e1hhh"]
+
+[node name="Scene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StoryManager" type="Control" parent="." node_paths=PackedStringArray("_ink_player")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_fo1y6")
+_ink_player = NodePath("InkPlayer")
+
+[node name="InkPlayer" type="Control" parent="StoryManager"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_epggo")
+ink_file = ExtResource("3_0m1tv")
+
+[node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_vfj14")
+wordButtonToInstance = ExtResource("2_7wh3j")
+textAreaHandle = NodePath("../TextAreaControl/MarginContainer/TextArea")
+
+[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_31r86")
+inventoryAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Inventory_HBox")
+wordButtonToInstance = ExtResource("2_7wh3j")
+
+[node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_e1hhh")
+commandAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Commands_HBox")
+wordButtonToInstance = ExtResource("2_7wh3j")
+
+[node name="InventoryControl" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.7
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="InventoryControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="BottomSpace_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer"]
+layout_mode = 2
+
+[node name="Inventory_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Commands_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextAreaControl" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 468.0
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="TextAreaControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="TextArea" type="HBoxContainer" parent="TextAreaControl/MarginContainer"]
+layout_mode = 2
