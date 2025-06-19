@@ -1,3 +1,4 @@
+class_name InventoryManager
 extends Control
 
 @export var inventoryAreaHandle:Control
@@ -15,7 +16,7 @@ func _ready():
 func _process(delta):
 	pass
 
-func addToInventory(w:WordButton):
+func addToInventory(w:WordButton, deleteAtEnd:bool):
 	
 	var tWordButton:WordButton = wordButtonToInstance.instantiate()
 	inventoryAreaHandle.add_child(tWordButton)
@@ -23,10 +24,11 @@ func addToInventory(w:WordButton):
 	tWordButton.updateWordText(w.word)
 	tWordButton.updateData(w)
 	tWordButton.SetInventory()
-	w.moveButtonToLocation(tWordButton)
+	tWordButton.toggleDrifting(true)
+	w.moveButtonToLocation(tWordButton,deleteAtEnd)
 
 func OnInteractiveButtonClicked(word, buttonHandle):
-	addToInventory(buttonHandle)
+	addToInventory(buttonHandle,false)
 
 func OnCommandButtonClicked(word, buttonHandle, deleteEntry):
-	addToInventory(buttonHandle)
+	addToInventory(buttonHandle, true)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxxv3rgawb73n"]
 
 [ext_resource type="PackedScene" uid="uid://badcm6unmfp41" path="res://examples/scenes/common/story_player.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://examples/scenes/common/back_button_margin_container.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://dq0ntqstedigy" path="res://examples/scenes/common/back_button_margin_container.tscn" id="2"]
 
 [sub_resource type="Resource" id="Resource_iyupc"]
 metadata/__load_path__ = "res://examples/ink/crime_scene/crime_scene.ink.json"

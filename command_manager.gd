@@ -2,7 +2,12 @@ extends Control
 
 @export var commandAreaHandle:Control
 @export var wordButtonToInstance:PackedScene
+@export var storyManagerHandle:StoryManager
+@export var textAreaHandle:Node2D
 
+@export var enterCommandHandle:Button
+
+var commandWordButtons:Array
 var commandWord:Array
 var nounRepresented:bool = false
 var verbRepresented:bool = false
@@ -11,16 +16,40 @@ var verbRepresented:bool = false
 func _ready():
 	Global.InventoryInteractibleClicked.connect(OnInventoryInteraction)
 	Global.CommandInteractibleClicked.connect(OnCommandInteraction)
+	enterCommandHandle.pressed.connect(OnCommandButtonPressed)
+	toggleCommandButton(false)
 
 func newCommand():
 	for w in range(commandWord.size()):
 		if is_instance_valid(commandWord[w]):
-			Global.CommandInteractibleClicked.emit(commandWord[w].word, commandWord[w],false)
+			Global.CommandInteractibleClicked.emit(commandWord[w], commandWord[w],false)
 	commandWord = []
+	#commandWordButtons = []
+	toggleCommandButton(false)
 	
 func executeCommand():
 	Global.gamePaused = true
-	await get_tree().create_timer(0.5).timeout
+	var tempWord = ""
+	for c in commandWord:
+		tempWord += c.word.to_lower()
+	print("EXECUTING COMMAND: CHecking for word: "+str(tempWord))
+	for a in storyManagerHandle.currentChoices:
+		print("Checking against: "+str(a))
+		
+	var i = storyManagerHandle.currentChoices.find(tempWord)
+	if (i != -1):
+		for b in commandWord:
+			b = b as WordButton
+			b.moveButtonToLocation(textAreaHandle, false, false)
+		await get_tree().create_timer(Global.shortPause).timeout	
+		Global.StoryChoiceMade.emit(i)
+		#for b in button
+		#buttonHandle.moveButtonToLocation(tWord)
+	else:
+		for d in commandWord:
+			d.shake()
+		await get_tree().create_timer(0.4).timeout	
+	
 	Global.gamePaused = false
 	newCommand()
 
@@ -28,6 +57,17 @@ func executeCommand():
 func _process(delta):
 	pass
 
+func toggleCommandButton(vis:bool = true):
+	var s = SimonTween.new()
+	if (vis):
+		enterCommandHandle.modulate.a = 0
+		await s.createTween(enterCommandHandle,"modulate:a",1,0.2).tweenDone
+		enterCommandHandle.modulate.a = 1
+	else:
+		enterCommandHandle.modulate.a = 1
+		await s.createTween(enterCommandHandle,"modulate:a",-1,0.2).tweenDone
+		enterCommandHandle.modulate.a = 0
+		
 func OnInventoryInteraction(word, buttonHandle):
 	if (commandWord.size() == 2):
 		print("COMMANDS: Too many commands!!!!")
@@ -46,7 +86,9 @@ func OnInventoryInteraction(word, buttonHandle):
 			return
 		else:
 			nounRepresented = true
-			
+	
+	if (commandWord.size() == 0):
+		toggleCommandButton(true)		
 	
 	var tWord = wordButtonToInstance.instantiate()
 	commandAreaHandle.add_child(tWord)
@@ -57,15 +99,22 @@ func OnInventoryInteraction(word, buttonHandle):
 	buttonHandle.moveButtonToLocation(tWord)
 	
 	commandWord.append(tWord)
-	if commandWord.size() == 2:
+	#commandWordButtons.append(buttonHandle)
+	
+	#AUTO COMPLETE COMMANDS IF YOU TAKE OUT "FALSE"
+	if commandWord.size() == 2 and false:
 #		#Execute command
 		executeCommand()
 	
 	#buttonHandle.queue_free()
 
+func OnCommandButtonPressed():
+	executeCommand()
+
 func OnCommandInteraction(word, buttonHandle, eraseEntry):
 	if eraseEntry:
 		commandWord.erase(buttonHandle)
+		#commandWordButtons.erase(buttonHandle)
 
 	if (buttonHandle.wData.status == WordData.wordStatus.VERB):
 		verbRepresented = false
@@ -74,5 +123,6 @@ func OnCommandInteraction(word, buttonHandle, eraseEntry):
 		nounRepresented = false
 	
 	if (commandWord.size() == 0):
+		toggleCommandButton(false)
 		print("COMMANDS: No commands left")
 	#buttonHandle.queue_free()
