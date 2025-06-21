@@ -1,4 +1,6 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://bgrtoh4ltf7ow"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bgrtoh4ltf7ow"]
+
+[ext_resource type="FontFile" uid="uid://b4hodyal8031" path="res://examples/fonts/typwrng.ttf" id="1_estr6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sro02"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -12,7 +14,9 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [resource]
 Button/colors/font_color = Color(1, 1, 1, 1)
 Button/colors/icon_normal_color = Color(1, 1, 1, 0)
+Button/fonts/font = ExtResource("1_estr6")
 Button/styles/focus = SubResource("StyleBoxFlat_sro02")
 Button/styles/hover = SubResource("StyleBoxFlat_i1761")
 Button/styles/normal = SubResource("StyleBoxFlat_estr6")
 RichTextLabel/font_sizes/normal_font_size = 30
+RichTextLabel/fonts/normal_font = ExtResource("1_estr6")
