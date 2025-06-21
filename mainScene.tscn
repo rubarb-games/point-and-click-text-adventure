@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bfflx0l6wr1es"]
+[gd_scene load_steps=12 format=3 uid="uid://bfflx0l6wr1es"]
 
 [ext_resource type="Script" uid="uid://4c8c8m2yqdsp" path="res://story_manager.gd" id="1_fo1y6"]
 [ext_resource type="Script" uid="uid://dfvrhy22uc4fy" path="res://textManager.gd" id="1_vfj14"]
@@ -7,12 +7,39 @@
 [ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
 [ext_resource type="Resource" uid="uid://xvyl2cwtrrtf" path="res://Assets/MainStory.json" id="3_we1jl"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
+[ext_resource type="Shader" uid="uid://c1vdikc7ejqht" path="res://lavacloud.gdshader" id="8_vuu3o"]
+[ext_resource type="Texture2D" uid="uid://bollg8tkj4l2k" path="res://Assets/Shader/bubbles.png" id="9_0pyiw"]
+[ext_resource type="Texture2D" uid="uid://ct715qwdwdfwm" path="res://Assets/ButtonBG.png" id="10_0pyiw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_14l1l"]
+shader = ExtResource("8_vuu3o")
+shader_parameter/bottom_color = Color(0.74, 0.333, 0.461883, 1)
+shader_parameter/top_color = Color(0.304279, 0, 0.156834, 1)
+shader_parameter/tex2 = ExtResource("10_0pyiw")
+shader_parameter/tex = ExtResource("9_0pyiw")
+shader_parameter/layer_count = 3
+shader_parameter/time_scale = 0.078
+shader_parameter/base_intensity = 0.146
+shader_parameter/size = 1.0
 
 [node name="Scene" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = -1
+material = SubResource("ShaderMaterial_14l1l")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -212.0
+offset_right = 7.0
+offset_bottom = 355.0
 grow_horizontal = 2
 grow_vertical = 2
 
