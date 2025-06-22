@@ -26,6 +26,7 @@ func _ready():
 	Global.CommandMade.connect(OnCommandMade)
 	#processText()
 	textAreaPosition = textAreaHandle.global_position
+	#lastCommandText.text = ""
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -35,6 +36,7 @@ func _process(delta):
 func evaluateText():
 	currentString = storyManagerHandle.currentStoryText
 	instantlyKillAllText()
+	Global.DisplayDebugText.emit("IN TEXT MANAGERRRR!")
 	#If this is text to be displayed, indicated by the arrow "^"
 	if (currentString[0] == "."):
 		currentString = currentString.substr(1)
@@ -153,7 +155,7 @@ func OnCommandMade(w):
 	var s = SimonTween.new()
 	await s.createTween(lastCommandText,"modulate:a",-1,Global.veryShortPause).tweenDone
 	lastCommandText.modulate.a = 0
-	lastCommandText.text = w
+	lastCommandText.text = w.replace("_"," ")
 	s.createTween(lastCommandText,"modulate:a",1,Global.longPause)
 
 func OnInteractiveButtonClicked(word, buttonHandle):

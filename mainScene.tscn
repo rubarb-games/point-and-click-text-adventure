@@ -5,23 +5,23 @@
 [ext_resource type="PackedScene" uid="uid://deucpxt1oo03y" path="res://word_button.tscn" id="2_7wh3j"]
 [ext_resource type="Script" uid="uid://liaj2kxrcyd3" path="res://inventory_manager.gd" id="2_31r86"]
 [ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
-[ext_resource type="Resource" uid="uid://xvyl2cwtrrtf" path="res://Assets/MainStory.json" id="3_we1jl"]
 [ext_resource type="Shader" path="res://VHS.gdshader" id="4_14l1l"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
-[ext_resource type="PackedScene" uid="uid://1b12jmhpum8t" path="res://word_popup.tscn" id="5_u7har"]
-[ext_resource type="Shader" path="res://lavacloud.gdshader" id="8_vuu3o"]
+[ext_resource type="PackedScene" path="res://word_popup.tscn" id="5_u7har"]
+[ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
+[ext_resource type="Shader" uid="uid://c1vdikc7ejqht" path="res://lavacloud.gdshader" id="8_vuu3o"]
 [ext_resource type="Texture2D" uid="uid://bollg8tkj4l2k" path="res://Assets/Shader/bubbles.png" id="9_0pyiw"]
-[ext_resource type="Texture2D" uid="uid://ct715qwdwdfwm" path="res://Assets/ButtonBG.png" id="10_0pyiw"]
+[ext_resource type="Resource" uid="uid://daiwrsv2veyoq" path="res://Assets/Game_A.json" id="9_us837"]
 [ext_resource type="Theme" uid="uid://bgrtoh4ltf7ow" path="res://MainGameText.tres" id="13_uqts1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_14l1l"]
 shader = ExtResource("8_vuu3o")
-shader_parameter/bottom_color = Color(0.74, 0.333, 0.461883, 1)
-shader_parameter/top_color = Color(0.304279, 0, 0.156834, 1)
-shader_parameter/tex2 = ExtResource("10_0pyiw")
+shader_parameter/bottom_color = Color(0.0802742, 0.0851853, 0.0790368, 1)
+shader_parameter/top_color = Color(0, 0, 0, 1)
+shader_parameter/tex2 = ExtResource("9_0pyiw")
 shader_parameter/tex = ExtResource("9_0pyiw")
-shader_parameter/layer_count = 3
-shader_parameter/time_scale = 0.078
+shader_parameter/layer_count = 2
+shader_parameter/time_scale = 0.109
 shader_parameter/base_intensity = 0.146
 shader_parameter/size = 1.0
 
@@ -29,8 +29,8 @@ shader_parameter/size = 1.0
 shader = ExtResource("4_14l1l")
 shader_parameter/wiggle = 0.03
 shader_parameter/wiggle_speed = 25.0
-shader_parameter/smear = 1.0
-shader_parameter/blur_samples = 15
+shader_parameter/smear = 0.5
+shader_parameter/blur_samples = 7
 
 [node name="Scene" type="Control"]
 layout_mode = 3
@@ -40,6 +40,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="ColorRect2" type="ColorRect" parent="."]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
 [node name="ColorRect" type="ColorRect" parent="."]
 z_index = -1
 material = SubResource("ShaderMaterial_14l1l")
@@ -47,15 +58,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -212.0
-offset_right = 7.0
-offset_bottom = 355.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="ColorRect VHS" type="ColorRect" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_u7har")
 layout_mode = 1
 anchors_preset = 15
@@ -72,6 +79,30 @@ offset_top = 66.055
 offset_right = 107.67
 offset_bottom = 106.055
 
+[node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugHandle")]
+visible = false
+anchors_preset = 0
+offset_left = 67.6699
+offset_top = 66.055
+offset_right = 107.67
+offset_bottom = 106.055
+mouse_filter = 2
+script = ExtResource("6_us837")
+debugHandle = NodePath("Debug")
+
+[node name="Debug" type="RichTextLabel" parent="DebugManager"]
+layout_mode = 0
+offset_left = -32.6699
+offset_top = 32.945
+offset_right = 76.3301
+offset_bottom = 72.945
+scale = Vector2(1.89655, 1.89655)
+mouse_filter = 2
+text = "DEBUG TEXTw"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
 [node name="StoryManager" type="Control" parent="." node_paths=PackedStringArray("_ink_player")]
 anchors_preset = 0
 offset_right = 40.0
@@ -84,7 +115,8 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_epggo")
-ink_file = ExtResource("3_we1jl")
+ink_file = ExtResource("9_us837")
+loads_in_background = false
 
 [node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle", "textAreaGuide", "InventoryManagerHandle", "storyManagerHandle", "lastCommandText")]
 anchors_preset = 0
@@ -98,15 +130,16 @@ InventoryManagerHandle = NodePath("../InventoryManager")
 storyManagerHandle = NodePath("../StoryManager")
 lastCommandText = NodePath("../TextAreaGuide/LastCommandText")
 
-[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle")]
+[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle", "InventoryLabelHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_31r86")
-inventoryAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Inventory_HBox")
+inventoryAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Inventory_HBox")
 wordButtonToInstance = ExtResource("2_7wh3j")
+InventoryLabelHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Label")
 
-[node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle", "storyManagerHandle", "textAreaHandle", "enterCommandHandle")]
+[node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle", "storyManagerHandle", "textAreaHandle", "enterCommandHandle", "smallWordHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -115,7 +148,8 @@ commandAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HB
 wordButtonToInstance = ExtResource("2_7wh3j")
 storyManagerHandle = NodePath("../StoryManager")
 textAreaHandle = NodePath("../TextAreaControl/MarginContainer/TextArea")
-enterCommandHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Button")
+enterCommandHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox/Button")
+smallWordHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox/connectingWord")
 
 [node name="InventoryControl" type="Control" parent="."]
 layout_mode = 1
@@ -140,23 +174,55 @@ theme_override_constants/margin_bottom = 25
 [node name="BottomSpace_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer"]
 layout_mode = 2
 
-[node name="Inventory_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
+[node name="Control" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
+z_index = -1
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -290.5
+offset_top = -21.0
+offset_right = -199.5
+offset_bottom = 2.0
+grow_horizontal = 2
+theme = ExtResource("13_uqts1")
+text = "Inventory"
+horizontal_alignment = 1
+
+[node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 5.0
+offset_right = 615.0
+offset_bottom = 166.0
+size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Commands_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer"]
+[node name="Commands_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer"]
-custom_minimum_size = Vector2(180, 40)
+[node name="connectingWord" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox" instance=ExtResource("2_7wh3j")]
 layout_mode = 2
+offset_right = 29.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox"]
+z_index = -1
+custom_minimum_size = Vector2(240, 20)
+layout_mode = 2
+offset_left = 117.0
+offset_top = 73.0
+offset_right = 357.0
+offset_bottom = 113.0
 size_flags_horizontal = 4
 text = "COMMAND"
 
@@ -193,6 +259,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="LastCommandText" type="RichTextLabel" parent="TextAreaGuide"]
+z_index = -1
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -202,7 +269,7 @@ offset_right = 48.5
 offset_bottom = 40.0
 grow_horizontal = 2
 theme = ExtResource("13_uqts1")
-text = "COMMAND"
+text = "LACUNA"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0

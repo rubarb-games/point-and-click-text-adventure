@@ -3,13 +3,13 @@
     -> start
 
 === start ===
-.The [door]Door is creaking at the other end of the room. One might [verb]walk over, maybe. Or just stand and [verb]look at it
+.The [noun]Door is creaking at the other end of the room. One might [verb]walk over, maybe. Or just stand and [verb]look at it
 
- * walkdoor
+ * walk_to_door
  -> walk_door
- * lookdoor
+ * look_at_door
  -> look_door
- * startdoor
+ * start_door
  -> start_door
  * win
  -> win

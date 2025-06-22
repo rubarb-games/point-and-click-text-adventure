@@ -1,0 +1,15 @@
+[remap]
+
+importer="inkgd.ink.json"
+type="Resource"
+uid="uid://daiwrsv2veyoq"
+path="res://.godot/imported/Game_A.json-d811f19b61c86c3375bef025d937f4af.res"
+
+[deps]
+
+source_file="res://Assets/Game_A.json"
+dest_files=["res://.godot/imported/Game_A.json-d811f19b61c86c3375bef025d937f4af.res"]
+
+[params]
+
+compress=true

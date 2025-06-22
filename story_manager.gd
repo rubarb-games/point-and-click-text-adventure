@@ -25,19 +25,20 @@ func _ready():
 
 
 func _story_loaded(successfully: bool):
+	Global.DisplayDebugText.emit("CONTINUE STORRR")
 	if !successfully:
 		return
-
 	print("Story is loaded!")
 	_ink_player.continue_story()
 
 
 func _continued(text, tags):
+	Global.DisplayDebugText.emit("CONTINUED STORY - LOOKING FOR TEXT")
 	if (text == ""):
 		print("Text is empty.. returning")
 		return
 		
-	print(text)
+	#print(text)
 	currentStoryText = text
 	Global.StoryProgressed.emit()
 	_ink_player.continue_story()

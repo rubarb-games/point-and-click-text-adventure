@@ -320,7 +320,6 @@ func create_story():
 		call_deferred("emit_signal", "loaded", false)
 		return ERR_CANT_CREATE
 
-	print("AYYYEO   "+str(typeof(ink_file.json)))
 	if !("json" in ink_file) || typeof(ink_file.json) != TYPE_STRING:
 		_push_error(
 				"'ink_file' doesn't have the appropriate resource type." + \
@@ -831,7 +830,7 @@ func _add_runtime() -> void:
 
 	if !runtime.is_connected("exception_raised", _exception_raised):
 		runtime.connect("exception_raised", _exception_raised)
-
+		
 	_ink_runtime = weakref(runtime)
 
 

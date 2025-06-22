@@ -15,6 +15,8 @@ signal StoryTextCleared
 signal StoryChoiceMade
 signal CommandMade
 
+signal DisplayDebugText #TEXT
+
 signal TextPopup #TEXT, #POSITION
 
 var timeScale:float = 1.0

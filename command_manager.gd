@@ -7,11 +7,18 @@ extends Control
 
 @export var enterCommandHandle:Button
 
+@export var smallWordHandle:WordButton
+
 var commandWordButtons:Array
 var commandWord:Array
 var nounRepresented:bool = false
 var verbRepresented:bool = false
 var adjectiveRepresented:bool = false
+
+var currentVerb:WordButton
+var currentNoun:WordButton
+var horiSpacing = 25
+var margin = 90
 
 # C0alled when the node enters the scene tree for the first time.
 func _ready():
@@ -19,6 +26,7 @@ func _ready():
 	Global.CommandInteractibleClicked.connect(OnCommandInteraction)
 	enterCommandHandle.pressed.connect(OnCommandButtonPressed)
 	toggleCommandButton(false)
+	smallWordHandle.updateWordText("")
 
 func newCommand():
 	for w in range(commandWord.size()):
@@ -31,23 +39,27 @@ func newCommand():
 func executeCommand():
 	Global.gamePaused = true
 	var tempWord = ""
-	for c in commandWord:
-		tempWord += c.word.to_lower()
-	print("EXECUTING COMMAND: CHecking for word: "+str(tempWord))
+	#for c in commandWord:
+	#	tempWord += c.word.to_lower()
+	#print("EXECUTING COMMAND: CHecking for word: "+str(tempWord))
+	if (verbRepresented):
+		tempWord += currentVerb.word.to_lower()
+	if (nounRepresented):
+		tempWord += "_" + smallWordHandle.word.to_lower() + "_" + currentNoun.word.to_lower()
+	
 	for a in storyManagerHandle.currentChoices:
-		print("Checking against: "+str(a))
+		print(str(tempWord)+" - Checking against: "+str(a))
 		
 	var i = storyManagerHandle.currentChoices.find(tempWord)
 	if (i != -1):
 		for b in commandWord:
 			b = b as WordButton
 			b.moveButtonToLocation(textAreaHandle, false, false)
+		var s = SimonTween.new()
+		s.createTween(smallWordHandle,"modulate:a",-1,Global.veryShortPause)
 		await get_tree().create_timer(Global.shortPause).timeout	
 		Global.StoryChoiceMade.emit(i)
-		var t2:String = ""
-		for a in commandWord:
-			t2 += a.word + "  "
-		Global.CommandMade.emit(t2)
+		Global.CommandMade.emit(tempWord)
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	else:
@@ -75,6 +87,9 @@ func toggleCommandButton(vis:bool = true):
 		enterCommandHandle.modulate.a = 0
 		
 func OnInventoryInteraction(word, buttonHandle):
+	var isCurrentlyVerb = false
+	var isCurrentlyNoun = false
+	
 	if (commandWord.size() == 3):
 		print("COMMANDS: Too many commands!!!!")
 		buttonHandle.errorShake()
@@ -88,7 +103,7 @@ func OnInventoryInteraction(word, buttonHandle):
 			Global.TextPopup.emit("Too many verbs",buttonHandle.global_position  + (buttonHandle.size / 2))
 			return
 		else:
-			verbRepresented = true
+			isCurrentlyVerb = true
 
 	if (buttonHandle.wData.status == WordData.wordStatus.NOUN):
 		if (nounRepresented):
@@ -97,7 +112,8 @@ func OnInventoryInteraction(word, buttonHandle):
 			Global.TextPopup.emit("Too many nouns",buttonHandle.global_position + (buttonHandle.size / 2))
 			return
 		else:
-			nounRepresented = true
+			isCurrentlyNoun = true
+
 	
 	if (buttonHandle.wData.status == WordData.wordStatus.ADJECTIVE):
 		if (adjectiveRepresented):
@@ -119,7 +135,17 @@ func OnInventoryInteraction(word, buttonHandle):
 	buttonHandle.moveButtonToLocation(tWord)
 	
 	commandWord.append(tWord)
+	
+	if (isCurrentlyVerb):
+		verbRepresented = true
+		currentVerb = tWord
+		
+	if (isCurrentlyNoun):
+		nounRepresented = true
+		currentNoun = tWord
 	#commandWordButtons.append(buttonHandle)
+	
+	updateLayout()
 	
 	#AUTO COMPLETE COMMANDS IF YOU TAKE OUT "FALSE"
 	if commandWord.size() == 2 and false:
@@ -127,6 +153,49 @@ func OnInventoryInteraction(word, buttonHandle):
 		executeCommand()
 	
 	#buttonHandle.queue_free()
+
+func updateLayout():
+	
+	var nounTargetPos:Vector2
+	var fadeOutMiniWord:bool = false
+	if (is_instance_valid(currentVerb)):
+		chooseSmallWord()
+		currentVerb.position.x = margin
+		#verbTargetPos.x = margin
+		#var s = SimonTween.new()
+		#s.createTween(currentVerb,"position",verbTargetPos - currentVerb.position,Global.shortPause)
+	else:
+		fadeOutMiniWord = true
+	if (is_instance_valid(currentNoun)):
+		if (verbRepresented):
+			smallWordHandle.position.x = currentVerb.position.x + currentVerb.size.x + horiSpacing
+			smallWordHandle.modulate.a = 0
+			var s = SimonTween.new()
+			s.createTween(smallWordHandle,"modulate:a",1,Global.shortPause)
+			nounTargetPos.x = smallWordHandle.position.x + smallWordHandle.size.x + horiSpacing
+			var k = SimonTween.new()
+			k.createTween(currentNoun,"position",nounTargetPos - currentNoun.position,Global.shortPause)
+		else:
+			nounTargetPos.x = margin
+			fadeOutMiniWord = true
+	else:
+			fadeOutMiniWord = true
+	if (fadeOutMiniWord):
+		var s = SimonTween.new()
+		s.createTween(smallWordHandle,"modulate:a",-1,Global.shortPause)
+			
+			
+func chooseSmallWord():
+	if (!verbRepresented):
+		return
+		
+	match currentVerb.word:
+		"look":
+			smallWordHandle.updateWordText("at")
+		"walk":
+			smallWordHandle.updateWordText("to")
+		_:
+			smallWordHandle.updateWordText("")
 
 func OnCommandButtonPressed():
 	executeCommand()
@@ -138,12 +207,16 @@ func OnCommandInteraction(word, buttonHandle, eraseEntry):
 
 	if (buttonHandle.wData.status == WordData.wordStatus.VERB):
 		verbRepresented = false
+		currentVerb = null
 
 	if (buttonHandle.wData.status == WordData.wordStatus.NOUN):
 		nounRepresented = false
+		currentNoun = null
 	
 	if (buttonHandle.wData.status == WordData.wordStatus.ADJECTIVE):
 		adjectiveRepresented = false
+	
+	updateLayout()
 	
 	if (commandWord.size() == 0):
 		toggleCommandButton(false)

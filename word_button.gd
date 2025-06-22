@@ -140,6 +140,8 @@ func moveButtonToLocation(goalObjectHandle:Node, deleteAtEnd:bool = true, fadeGo
 		self.global_position = origPos
 		if (fadeGoal):
 			await s.createTween(self,"modulate:a",1,Global.veryShortPause).tweenDone
+			
+	return true
 
 func deleteObject():
 	self.queue_free()
