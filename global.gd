@@ -13,6 +13,9 @@ signal StoryProgressed
 signal OnMakeStoryChoice
 signal StoryTextCleared
 signal StoryChoiceMade
+signal CommandMade
+
+signal TextPopup #TEXT, #POSITION
 
 var timeScale:float = 1.0
 var gamePaused:bool = false

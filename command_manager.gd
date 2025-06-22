@@ -11,6 +11,7 @@ var commandWordButtons:Array
 var commandWord:Array
 var nounRepresented:bool = false
 var verbRepresented:bool = false
+var adjectiveRepresented:bool = false
 
 # C0alled when the node enters the scene tree for the first time.
 func _ready():
@@ -43,9 +44,14 @@ func executeCommand():
 			b.moveButtonToLocation(textAreaHandle, false, false)
 		await get_tree().create_timer(Global.shortPause).timeout	
 		Global.StoryChoiceMade.emit(i)
+		var t2:String = ""
+		for a in commandWord:
+			t2 += a.word + "  "
+		Global.CommandMade.emit(t2)
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	else:
+		Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
 		for d in commandWord:
 			d.shake()
 		await get_tree().create_timer(0.4).timeout	
@@ -69,13 +75,17 @@ func toggleCommandButton(vis:bool = true):
 		enterCommandHandle.modulate.a = 0
 		
 func OnInventoryInteraction(word, buttonHandle):
-	if (commandWord.size() == 2):
+	if (commandWord.size() == 3):
 		print("COMMANDS: Too many commands!!!!")
+		buttonHandle.errorShake()
+		Global.TextPopup.emit("Too many words",buttonHandle.global_position + (buttonHandle.size / 2))
 		return
 
 	if (buttonHandle.wData.status == WordData.wordStatus.VERB):
 		if (verbRepresented):
 			print("COMMANDS: Too many verbs!!!")
+			buttonHandle.errorShake()
+			Global.TextPopup.emit("Too many verbs",buttonHandle.global_position  + (buttonHandle.size / 2))
 			return
 		else:
 			verbRepresented = true
@@ -83,9 +93,19 @@ func OnInventoryInteraction(word, buttonHandle):
 	if (buttonHandle.wData.status == WordData.wordStatus.NOUN):
 		if (nounRepresented):
 			print("COMMANDS: Too many nouns!!!")
+			buttonHandle.errorShake()
+			Global.TextPopup.emit("Too many nouns",buttonHandle.global_position + (buttonHandle.size / 2))
 			return
 		else:
 			nounRepresented = true
+	
+	if (buttonHandle.wData.status == WordData.wordStatus.ADJECTIVE):
+		if (adjectiveRepresented):
+			print("COMMANDS: Too many adjectives")
+			buttonHandle.errorShake()
+			return
+		else:
+			adjectiveRepresented = true
 	
 	if (commandWord.size() == 0):
 		toggleCommandButton(true)		
@@ -121,6 +141,9 @@ func OnCommandInteraction(word, buttonHandle, eraseEntry):
 
 	if (buttonHandle.wData.status == WordData.wordStatus.NOUN):
 		nounRepresented = false
+	
+	if (buttonHandle.wData.status == WordData.wordStatus.ADJECTIVE):
+		adjectiveRepresented = false
 	
 	if (commandWord.size() == 0):
 		toggleCommandButton(false)

@@ -1,9 +1,9 @@
-.Welp, I guess this is where everything _start[verb then? No turning _back[verb now
+.Welp, I guess this is where everything [verb]start then? No turning [verb]back now
     * start
     -> start
 
 === start ===
-.The _Door[noun is creaking at the other end of the room. One might _walk[verb over, maybe. Or just stand and _look[verb at it
+.The [door]Door is creaking at the other end of the room. One might [verb]walk over, maybe. Or just stand and [verb]look at it
 
  * walkdoor
  -> walk_door
@@ -27,7 +27,7 @@
     -> start
     
 === start_door ===
-    .Umm, you actually "start" the door? Is this some kind of _win[verb for you?
+    .Umm, you actually "start" the door? Is this some kind of [verb]win for you?
 
     * back
     -> start

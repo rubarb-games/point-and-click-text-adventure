@@ -7,6 +7,7 @@ var currentString:String = ""
 
 @export var InventoryManagerHandle:InventoryManager
 @export var storyManagerHandle:StoryManager
+@export var lastCommandText:RichTextLabel
 var words:Array[WordData]
 var wordButtons:Array[WordButton]
 
@@ -22,6 +23,7 @@ func _ready():
 	Global.InteractableWordClicked.connect(OnInteractiveButtonClicked)
 	Global.StoryProgressed.connect(OnStoryProgressed)
 	Global.StoryChoiceMade.connect(OnStoryChoiceMade)
+	Global.CommandMade.connect(OnCommandMade)
 	#processText()
 	textAreaPosition = textAreaHandle.global_position
 
@@ -65,10 +67,10 @@ func processText():
 	for w in wordsRaw:
 		#print("Processing word "+str(w))
 		tWord = WordData.new()
-		if (w[0] == "_"):
+		if (w[0] == "["):
 			w = w.substr(1)
-			tw = w.split("[")
-			match tw[1]:
+			tw = w.split("]")
+			match tw[0]:
 				"noun":
 					print("YEP! NOUN!")
 					tWord.status = WordData.wordStatus.NOUN
@@ -76,7 +78,7 @@ func processText():
 					print("YEP! VERB!")
 					tWord.status = WordData.wordStatus.VERB
 			tWord.isDiscoverable = true
-			w = tw[0]
+			w = tw[1]
 		
 		tWord.word = w
 		words.append(tWord)
@@ -145,6 +147,14 @@ func OnStoryProgressed():
 
 func OnStoryChoiceMade(i):
 	dumpText()
+
+
+func OnCommandMade(w):
+	var s = SimonTween.new()
+	await s.createTween(lastCommandText,"modulate:a",-1,Global.veryShortPause).tweenDone
+	lastCommandText.modulate.a = 0
+	lastCommandText.text = w
+	s.createTween(lastCommandText,"modulate:a",1,Global.longPause)
 
 func OnInteractiveButtonClicked(word, buttonHandle):
 	pass

@@ -27,6 +27,9 @@ func addToInventory(w:WordButton, deleteAtEnd:bool):
 	tWordButton.toggleDrifting(true)
 	w.moveButtonToLocation(tWordButton,deleteAtEnd)
 
+func updateInventoryLayout():
+	pass
+
 func OnInteractiveButtonClicked(word, buttonHandle):
 	addToInventory(buttonHandle,false)
 

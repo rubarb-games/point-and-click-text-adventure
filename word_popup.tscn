@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://1b12jmhpum8t"]
+
+[ext_resource type="Script" uid="uid://badu307jqw5bs" path="res://word_popup.gd" id="1_5aq5v"]
+[ext_resource type="PackedScene" uid="uid://ccwcj78a1ny4d" path="res://word_popup_text.tscn" id="2_xgyb0"]
+
+[sub_resource type="Curve" id="Curve_5aq5v"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.305046, 1), 0.0, 0.0, 0, 0, Vector2(0.880734, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_xgyb0"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.376147, 1), 0.0, 0.0, 0, 0, Vector2(0.756881, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="WordPopup" type="Control" node_paths=PackedStringArray("textHandle")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+script = ExtResource("1_5aq5v")
+textHandle = NodePath("RichTextLabel")
+instanceText = ExtResource("2_xgyb0")
+textMoveCurve = SubResource("Curve_5aq5v")
+textOpacityCurve = SubResource("Curve_xgyb0")
+
+[node name="RichTextLabel" parent="." instance=ExtResource("2_xgyb0")]
+layout_mode = 0

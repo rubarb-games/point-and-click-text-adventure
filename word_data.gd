@@ -1,7 +1,7 @@
 class_name WordData
 extends Resource
 
-enum wordStatus { VERB, NOUN, OTHER, DISABLED }
+enum wordStatus { VERB, NOUN, ADJECTIVE, OTHER, DISABLED }
 var status:wordStatus = wordStatus.DISABLED
 
 var word:String

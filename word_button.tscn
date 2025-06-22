@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://deucpxt1oo03y"]
+[gd_scene load_steps=7 format=3 uid="uid://deucpxt1oo03y"]
 
 [ext_resource type="Script" uid="uid://cnbrwvqeupx3l" path="res://word_button.gd" id="1_6lrsh"]
 [ext_resource type="Theme" uid="uid://bgrtoh4ltf7ow" path="res://MainGameText.tres" id="1_8si5s"]
@@ -14,12 +14,17 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.213523, 0.907514), 0.0, 0.0, 0, 0, Vector2(0.380783, -0.872832), 0.0, 0.0, 0, 0, Vector2(0.615658, 0.734104), 0.0, 0.0, 0, 0, Vector2(0.758007, -0.34104), 0.0, 0.0, 0, 0, Vector2(0.864769, 0.109827), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 7
 
+[sub_resource type="Curve" id="Curve_oy8bl"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.116972, 1), 0.0, 0.0, 0, 0, Vector2(0.254587, -0.972101), 0.0, 0.0, 0, 0, Vector2(0.461009, 0.614647), 0.0, 0.0, 0, 0, Vector2(0.612385, -0.530079), 0.0, 0.0, 0, 0, Vector2(0.704128, 0.297297), 0.0, 0.0, 0, 0, Vector2(0.834862, -0.212729), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 8
+
 [node name="Button" type="RichTextLabel" node_paths=PackedStringArray("buttonHandle")]
 clip_contents = false
 custom_minimum_size = Vector2(0, 40)
 offset_bottom = 42.0
-size_flags_horizontal = 0
-size_flags_vertical = 4
+size_flags_horizontal = 6
+size_flags_vertical = 6
 mouse_filter = 2
 theme = ExtResource("1_8si5s")
 bbcode_enabled = true
@@ -28,7 +33,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
-horizontal_alignment = 3
+horizontal_alignment = 1
 vertical_alignment = 1
 deselect_on_focus_loss_enabled = false
 script = ExtResource("1_6lrsh")
@@ -36,6 +41,7 @@ buttonHandle = NodePath("ActualWord")
 fadeCurve = ExtResource("2_iqcyv")
 driftingCurve = SubResource("Curve_8si5s")
 shakeCurve = SubResource("Curve_30y0u")
+rotShakeCurve = SubResource("Curve_oy8bl")
 
 [node name="WordButton" type="Button" parent="."]
 z_index = -1
@@ -57,14 +63,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(14, 20)
 size_flags_horizontal = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme = ExtResource("1_8si5s")
 bbcode_enabled = true
+text = "W"
 fit_content = true
 scroll_active = false
 shortcut_keys_enabled = false
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [connection signal="pressed" from="WordButton" to="." method="OnClicked"]

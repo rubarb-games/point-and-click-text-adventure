@@ -25,6 +25,8 @@ var driftOn:bool =false
 @export var shakeCurve:Curve
 var shakeTween:SimonTween
 
+@export var rotShakeCurve:Curve
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -57,13 +59,23 @@ func fadeIn():
 func shake():
 	shakeTween = SimonTween.new()
 	await shakeTween.createTween(buttonHandle,"position:y",20,0.2,shakeCurve).tweenDone
-	
+	return true
+
+func errorShake():
+	var whiteToRed = Color.WHITE - Color.RED
+	buttonHandle.modulate = Color.WHITE
+	var s = SimonTween.new()
+	await s.createTween(buttonHandle,"modulate",whiteToRed,0.25,null,SimonTween.PINGPONG).anotherParallel(). \
+	createTween(buttonHandle,"rotation",deg_to_rad(25),0.25,rotShakeCurve).tweenDone
+	buttonHandle.modulate = Color.WHITE
 	return true
 
 func updateWordText(w:String):
 	word = w
 	self.text = "[center]"+w
 	buttonHandle.text  = "[center]"+w
+
+	buttonHandle.pivot_offset = Vector2(self.size.x, self.size.y / 2)
 
 func updateData(button:WordButton):
 	word = button.word
