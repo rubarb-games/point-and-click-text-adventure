@@ -17,6 +17,12 @@ var inventoryItem:bool = false
 var commandItem:bool = false
 
 var active:bool = true
+var defaultColor:Color
+var highlightedColor:Color = Color.WHITE
+var mutedColor:Color = Color.DIM_GRAY
+var specialColor:Color = Color.DARK_KHAKI
+var disabledColor:Color = Color(0.2,0.2,0.2,1)
+var previousColor:Color
 
 @export var driftingCurve:Curve
 var driftingTween:SimonTween
@@ -30,6 +36,8 @@ var shakeTween:SimonTween
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
+	defaultColor = highlightedColor
+	previousColor = defaultColor
 	self_modulate.a = 0.0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -62,12 +70,12 @@ func shake():
 	return true
 
 func errorShake():
-	var whiteToRed = Color.WHITE - Color.RED
-	buttonHandle.modulate = Color.WHITE
+	var whiteToRed = defaultColor - Color.RED
+	buttonHandle.modulate = defaultColor
 	var s = SimonTween.new()
 	await s.createTween(buttonHandle,"modulate",whiteToRed,0.25,null,SimonTween.PINGPONG).anotherParallel(). \
 	createTween(buttonHandle,"rotation",deg_to_rad(25),0.25,rotShakeCurve).tweenDone
-	buttonHandle.modulate = Color.WHITE
+	buttonHandle.modulate = defaultColor
 	return true
 
 func updateWordText(w:String):
@@ -82,9 +90,16 @@ func updateData(button:WordButton):
 	wData = button.wData
 
 func disable():
-	buttonHandle.self_modulate = Color.WHITE
+	previousColor = defaultColor
+	#defaultColor = disabledColor
+	defaultColor = highlightedColor
+	buttonHandle.self_modulate = defaultColor
 	active = false
 	toggleDrifting(false)
+
+func enable():
+	defaultColor = previousColor
+	active = true
 
 func SetInteractible():
 	bS = buttonStatus.TEXTLOG_INTERACTIBLE
@@ -92,7 +107,7 @@ func SetInteractible():
 
 func SetInventory():
 	bS = buttonStatus.INVENTORY
-	buttonHandle.self_modulate = Color.WHITE
+	buttonHandle.self_modulate = defaultColor
 
 func SetCommands():
 	bS = buttonStatus.COMMAND
@@ -100,8 +115,20 @@ func SetCommands():
 func SetNormal():
 	bS = buttonStatus.TEXTLOG_NORMAL
 
+func setHighlightedColor():
+	defaultColor = highlightedColor
+	buttonHandle.self_modulate = highlightedColor
+	
+func setMutedColor():
+	defaultColor = mutedColor
+	buttonHandle.self_modulate = mutedColor
+
+func setSpecialColor():
+	defaultColor = specialColor
+	buttonHandle.self_modulate = specialColor
+
 func Die():
-	print("I'm dying now!")
+	#print("I'm dying now!")
 	var s = SimonTween.new()
 	await s.createTween(self,"modulate:a",-1,0.1).tweenDone
 	self.queue_free()

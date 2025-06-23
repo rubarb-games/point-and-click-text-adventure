@@ -23,6 +23,7 @@ func _ready():
 	Global.InteractableWordClicked.connect(OnInteractiveButtonClicked)
 	Global.StoryProgressed.connect(OnStoryProgressed)
 	Global.StoryChoiceMade.connect(OnStoryChoiceMade)
+	Global.DumpText.connect(OnDumpText)
 	Global.CommandMade.connect(OnCommandMade)
 	#processText()
 	textAreaPosition = textAreaHandle.global_position
@@ -35,18 +36,26 @@ func _process(delta):
 	
 func evaluateText():
 	currentString = storyManagerHandle.currentStoryText
+	print("EVALUATING TEXT:")
+	print("Story: "+str(currentString))
 	instantlyKillAllText()
+	await get_tree().process_frame
 	Global.DisplayDebugText.emit("IN TEXT MANAGERRRR!")
 	#If this is text to be displayed, indicated by the arrow "^"
-	if (currentString[0] == "."):
-		currentString = currentString.substr(1)
-		processText()
+	#if (currentString[0] == "."):
+	#	currentString = currentString.substr(1)
+	processTextRegex()
+		#processText()
 
-func dumpText():
+func dumpText(alsoProgress:bool = true):
+	print("DUMPING!")
 	for w in range(wordButtons.size()):
 		if (is_instance_valid(wordButtons[w])):
 			wordButtons[w].Die()
 	wordButtons = []
+	if (!alsoProgress):
+		return
+	
 	await get_tree().create_timer(0.5).timeout
 	Global.StoryTextCleared.emit()
 	
@@ -57,6 +66,80 @@ func instantlyKillAllText():
 	
 func fetchText():
 	currentString = tempString
+	
+func processTextRegex():
+	var rx = RegEx.new()
+	rx.compile(r'(\[[^\]]+\])|([^\[]+)')
+	var ry = RegEx.new()
+	ry.compile(r"\b\w+\b")
+
+	var result = rx.search_all(currentString.strip_edges())
+	var active_tags = []
+	var word_list = []
+	
+	for m in result:
+		var tag = m.get_string(1)
+		var plain = m.get_string(2)
+		if tag != "":
+			if (!tag.begins_with("[/")):
+				active_tags.append(tag)
+			else:
+				var tag_name = tag.substr(2,tag.length() - 3)
+				for i in range(active_tags.size() - 1,-1,1):
+					if active_tags[i].begins_with("[%s", % tag_name):
+						active_tags.remove_at(i)
+						break
+		elif plain != "":
+			if (active_tags.size() > 0):
+				var entry = {
+					"word": plain,
+					"tag": active_tags[-1]
+				}
+				word_list.append(entry)
+			else:	
+				var word_matches = ry.search_all(plain)
+				for wMatches in word_matches:
+					var w = wMatches.get_string()
+					var entry = {
+						"word": w,
+						"tag": active_tags[-1] if active_tags.size() > 0  else null
+					}
+					word_list.append(entry)
+					
+	var s:String = ""
+	var butt:WordButton
+	
+	print("Processing words: ")
+	for b in word_list:
+		print("WORD: "+str(b))
+		var wD = WordData.new()
+		wD.word = b["word"]
+		#If evaluateType() returns a rule, skip adding a button
+		if (wD.evaluateType(b)):
+			#print("Instantiating")
+			butt = wordButtonToInstance.instantiate()
+			textAreaHandle.add_child(butt)
+			#butt.word = b.word
+			butt.updateWordText(wD.word)
+			butt.wData = wD
+			wordButtons.append(butt)
+			if (wD.isDiscoverable):
+				if (!checkIfWordIsDiscovered(b.word)):
+					butt.SetInteractible()
+					butt.toggleDrifting(true)
+					butt.updateWord()
+					butt.fadeIn()
+			else:
+				butt.updateWord()
+				butt.fadeIn()
+	
+	updateLayout()
+
+
+	
+	print("WORD LIST: ")
+	for w in word_list:
+		print(w)
 	
 func processText():
 	#print("FETCHED! "+currentString)
@@ -148,7 +231,10 @@ func OnStoryProgressed():
 	evaluateText()
 
 func OnStoryChoiceMade(i):
-	dumpText()
+	dumpText(true)
+
+func OnDumpText(alsoProgress:bool):
+	dumpText(alsoProgress)
 
 
 func OnCommandMade(w):

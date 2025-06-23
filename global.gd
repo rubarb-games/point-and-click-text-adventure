@@ -14,10 +14,15 @@ signal OnMakeStoryChoice
 signal StoryTextCleared
 signal StoryChoiceMade
 signal CommandMade
+signal DumpText
+signal GoBack
 
 signal DisplayDebugText #TEXT
 
 signal TextPopup #TEXT, #POSITION
+
+signal LocationEncountered(location:String) #Location:string
+signal RuleEncountered(rule:String)
 
 var timeScale:float = 1.0
 var gamePaused:bool = false

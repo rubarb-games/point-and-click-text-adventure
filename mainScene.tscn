@@ -103,12 +103,14 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="StoryManager" type="Control" parent="." node_paths=PackedStringArray("_ink_player")]
+[node name="StoryManager" type="Control" parent="." node_paths=PackedStringArray("_ink_player", "commandManagerHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("1_fo1y6")
 _ink_player = NodePath("InkPlayer")
+commandManagerHandle = NodePath("../CommandManager")
 
 [node name="InkPlayer" type="Control" parent="StoryManager"]
 anchors_preset = 0
@@ -122,6 +124,7 @@ loads_in_background = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("1_vfj14")
 wordButtonToInstance = ExtResource("2_7wh3j")
 textAreaHandle = NodePath("../TextAreaControl/MarginContainer/TextArea")
@@ -130,19 +133,22 @@ InventoryManagerHandle = NodePath("../InventoryManager")
 storyManagerHandle = NodePath("../StoryManager")
 lastCommandText = NodePath("../TextAreaGuide/LastCommandText")
 
-[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle", "InventoryLabelHandle")]
+[node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle", "InventoryLabelHandle", "storyManagerHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("2_31r86")
 inventoryAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Inventory_HBox")
 wordButtonToInstance = ExtResource("2_7wh3j")
 InventoryLabelHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Label")
+storyManagerHandle = NodePath("../StoryManager")
 
 [node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle", "storyManagerHandle", "textAreaHandle", "enterCommandHandle", "smallWordHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 script = ExtResource("4_e1hhh")
 commandAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox")
 wordButtonToInstance = ExtResource("2_7wh3j")
@@ -156,8 +162,10 @@ layout_mode = 1
 anchor_top = 0.7
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 31.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="InventoryControl"]
 layout_mode = 1
@@ -166,6 +174,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 25
 theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
@@ -173,6 +182,7 @@ theme_override_constants/margin_bottom = 25
 
 [node name="BottomSpace_HBox" type="HBoxContainer" parent="InventoryControl/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Control" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
 layout_mode = 2
@@ -201,14 +211,21 @@ offset_right = 615.0
 offset_bottom = 166.0
 size_flags_horizontal = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
+[node name="VBoxContainer" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 
 [node name="Commands_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer"]
 layout_mode = 2
+anchors_preset = 0
+offset_left = 271.0
+offset_top = -3.0
+offset_right = 571.0
+offset_bottom = 132.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="connectingWord" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox" instance=ExtResource("2_7wh3j")]
 layout_mode = 2
@@ -219,10 +236,10 @@ offset_bottom = 40.0
 z_index = -1
 custom_minimum_size = Vector2(240, 20)
 layout_mode = 2
-offset_left = 117.0
-offset_top = 73.0
-offset_right = 357.0
-offset_bottom = 113.0
+offset_left = 35.0
+offset_top = 97.0
+offset_right = 275.0
+offset_bottom = 137.0
 size_flags_horizontal = 4
 text = "COMMAND"
 
@@ -232,6 +249,7 @@ anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 468.0
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="TextAreaControl"]
 layout_mode = 1
@@ -240,6 +258,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 100
 theme_override_constants/margin_top = 100
 theme_override_constants/margin_right = 100
@@ -254,8 +273,6 @@ offset_left = 100.0
 offset_top = 100.0
 offset_right = 1140.0
 offset_bottom = 368.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
 
 [node name="LastCommandText" type="RichTextLabel" parent="TextAreaGuide"]
@@ -268,6 +285,7 @@ offset_left = -48.5
 offset_right = 48.5
 offset_bottom = 40.0
 grow_horizontal = 2
+mouse_filter = 2
 theme = ExtResource("13_uqts1")
 text = "LACUNA"
 fit_content = true
@@ -275,3 +293,26 @@ scroll_active = false
 autowrap_mode = 0
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="GoToIndex" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 41.0
+offset_top = 28.0
+offset_right = 138.0
+offset_bottom = 82.0
+text = "GOTO
+STATE"
+
+[node name="SaveIndex" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 166.0
+offset_top = 27.0
+offset_right = 221.0
+offset_bottom = 81.0
+text = "SAVE 
+STATE"
+
+[connection signal="pressed" from="GoToIndex" to="StoryManager" method="OnSetSate"]
+[connection signal="pressed" from="SaveIndex" to="StoryManager" method="OnGetState"]

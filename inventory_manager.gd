@@ -4,12 +4,13 @@ extends Control
 @export var inventoryAreaHandle:Control
 @export var wordButtonToInstance:PackedScene
 @export var InventoryLabelHandle:Label
+@export var storyManagerHandle:StoryManager
 
 var inventoryWords:Array[WordButton]
 
-var horiSpacing = 120
-var vertiSpacing = 60
-var zigZagSpace = 20
+var horiSpacing = 100
+var vertiSpacing = 40
+var zigZagSpace = 6
 var rowNum = 8
 var margin = 40
 
@@ -17,6 +18,7 @@ var margin = 40
 func _ready():
 	Global.InteractableWordClicked.connect(OnInteractiveButtonClicked)
 	Global.CommandInteractibleClicked.connect(OnCommandButtonClicked)
+	Global.StoryProgressed.connect(OnStoryProgressed)
 	InventoryLabelHandle.modulate.a = 0
 
 
@@ -44,7 +46,7 @@ func addToInventory(w:WordButton, deleteAtEnd:bool):
 func setInventoryPosition(ind):
 	var pos:Vector2
 	
-	pos.x = margin + (ind * horiSpacing)
+	pos.x = (margin + (ind * horiSpacing)) % (margin + (horiSpacing*rowNum))
 	pos.y = vertiSpacing * (round(ind/ rowNum)) + (zigZagSpace * (ind % 2))
 	
 	return pos
@@ -56,11 +58,35 @@ func updateInventoryLayout():
 	targetPosition.resize(c.size())
 	
 	for a in range(c.size()):
-		targetPosition[a].x = margin + (horiSpacing * a)
+		targetPosition[a].x = margin + (horiSpacing * a) % (margin + (horiSpacing*(rowNum-1)))
 		targetPosition[a].y = vertiSpacing * (round(a / rowNum)) + (zigZagSpace * (a % 2))
 		
 		var s = SimonTween.new()
 		s.createTween(c[a],"position",targetPosition[a] - c[a].position,Global.shortPause)
+	
+	checkIfWordIsUseful()
+
+func OnStoryProgressed():
+	updateInventoryLayout()
+
+func checkIfWordIsUseful():
+	await get_tree().process_frame
+	#print("CHECKINg THIS STUFF OUTTTT")
+	var skip:bool = false
+	for i in inventoryAreaHandle.get_children():
+		skip = false
+		i.setMutedColor()
+		if (i.word == "back" and !skip):
+			i.setSpecialColor()
+			skip = true
+			
+		#print("CHECKING FOR MATCHES FOR... "+str(i.word))
+		for s in storyManagerHandle.currentChoices:
+			#print("CHECKING "+str(i.word)+" AGAINST: "+str(s))
+			if (s.contains(i.word.strip_edges()) and !skip):
+				#print("FOUND MATCH IN WORD! "+str(i.word)+" AND "+str(s))
+				i.setHighlightedColor()
+				skip = true
 
 func OnInteractiveButtonClicked(word, buttonHandle):
 	addToInventory(buttonHandle,false)

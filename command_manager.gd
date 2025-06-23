@@ -17,8 +17,8 @@ var adjectiveRepresented:bool = false
 
 var currentVerb:WordButton
 var currentNoun:WordButton
-var horiSpacing = 25
-var margin = 90
+var horiSpacing = 15
+var margin = 60
 
 # C0alled when the node enters the scene tree for the first time.
 func _ready():
@@ -33,6 +33,9 @@ func newCommand():
 		if is_instance_valid(commandWord[w]):
 			Global.CommandInteractibleClicked.emit(commandWord[w], commandWord[w],false)
 	commandWord = []
+	smallWordHandle.updateWordText("")
+	nounRepresented = false
+	verbRepresented = false
 	#commandWordButtons = []
 	toggleCommandButton(false)
 	
@@ -44,13 +47,16 @@ func executeCommand():
 	#print("EXECUTING COMMAND: CHecking for word: "+str(tempWord))
 	if (verbRepresented):
 		tempWord += currentVerb.word.to_lower()
+		print("HEPPP"+str(tempWord))
 	if (nounRepresented):
 		tempWord += "_" + smallWordHandle.word.to_lower() + "_" + currentNoun.word.to_lower()
-	
-	for a in storyManagerHandle.currentChoices:
-		print(str(tempWord)+" - Checking against: "+str(a))
 		
-	var i = storyManagerHandle.currentChoices.find(tempWord)
+	print("IDK WHAT TO TELL YOUUUU"+str(tempWord))
+	await get_tree().process_frame
+	for a in storyManagerHandle.currentChoices:
+		print(str(tempWord)+" - Checking against: "+str(a.strip_edges()))
+		
+	var i = storyManagerHandle.currentChoices.find(tempWord.strip_edges())
 	if (i != -1):
 		for b in commandWord:
 			b = b as WordButton
@@ -62,6 +68,8 @@ func executeCommand():
 		Global.CommandMade.emit(tempWord)
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
+	elif (tempWord == "__back" or tempWord == "take__back"):
+		Global.GoBack.emit()
 	else:
 		Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
 		for d in commandWord:
@@ -132,6 +140,7 @@ func OnInventoryInteraction(word, buttonHandle):
 	tWord.updateWordText(buttonHandle.word)
 	tWord.updateData(buttonHandle)
 	tWord.SetCommands()
+	#buttonHandle.disable()
 	buttonHandle.moveButtonToLocation(tWord)
 	
 	commandWord.append(tWord)

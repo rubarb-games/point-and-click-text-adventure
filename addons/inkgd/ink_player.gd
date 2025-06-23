@@ -328,7 +328,7 @@ func create_story():
 		call_deferred("emit_signal", "loaded", false)
 		return ERR_CANT_CREATE
 
-	print("Story is reaalllll"+str(ink_file.json))
+	#print("Story is reaalllll"+str(ink_file.json))
 	_add_runtime()
 
 	if loads_in_background && _current_platform_supports_threads():
