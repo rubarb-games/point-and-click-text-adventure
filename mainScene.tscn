@@ -7,11 +7,11 @@
 [ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
 [ext_resource type="Shader" path="res://VHS.gdshader" id="4_14l1l"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
-[ext_resource type="PackedScene" path="res://word_popup.tscn" id="5_u7har"]
+[ext_resource type="PackedScene" uid="uid://1b12jmhpum8t" path="res://word_popup.tscn" id="5_u7har"]
 [ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
+[ext_resource type="Resource" uid="uid://utq2hsph8aje" path="res://Assets/Game_B.json" id="8_uqts1"]
 [ext_resource type="Shader" uid="uid://c1vdikc7ejqht" path="res://lavacloud.gdshader" id="8_vuu3o"]
 [ext_resource type="Texture2D" uid="uid://bollg8tkj4l2k" path="res://Assets/Shader/bubbles.png" id="9_0pyiw"]
-[ext_resource type="Resource" uid="uid://daiwrsv2veyoq" path="res://Assets/Game_A.json" id="9_us837"]
 [ext_resource type="Theme" uid="uid://bgrtoh4ltf7ow" path="res://MainGameText.tres" id="13_uqts1"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_14l1l"]
@@ -117,7 +117,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_epggo")
-ink_file = ExtResource("9_us837")
+ink_file = ExtResource("8_uqts1")
 loads_in_background = false
 
 [node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle", "textAreaGuide", "InventoryManagerHandle", "storyManagerHandle", "lastCommandText")]
@@ -204,7 +204,6 @@ text = "Inventory"
 horizontal_alignment = 1
 
 [node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
-layout_mode = 2
 anchors_preset = 0
 offset_left = 5.0
 offset_right = 615.0
@@ -217,7 +216,6 @@ size_flags_horizontal = 3
 mouse_filter = 2
 
 [node name="Commands_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer"]
-layout_mode = 2
 anchors_preset = 0
 offset_left = 271.0
 offset_top = -3.0
@@ -228,14 +226,14 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="connectingWord" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox" instance=ExtResource("2_7wh3j")]
-layout_mode = 2
+layout_mode = 0
 offset_right = 29.0
 offset_bottom = 40.0
 
 [node name="Button" type="Button" parent="InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox"]
 z_index = -1
 custom_minimum_size = Vector2(240, 20)
-layout_mode = 2
+layout_mode = 0
 offset_left = 35.0
 offset_top = 97.0
 offset_right = 275.0

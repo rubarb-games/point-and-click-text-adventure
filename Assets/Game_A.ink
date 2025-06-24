@@ -1,4 +1,4 @@
-[generic]generic[/generic]
+Is it <rule>generic</rule> though? If nothing else it is happening
 
     * auto_start
     -> tutorial_pre_start_a
@@ -6,16 +6,23 @@
     -> generic_game
     * look
     -> generic_look
+    * take
+    -> generic_take
+    
 === generic_look ===
 .You look, but see nothing. Weird!
 
 === generic_game ===
 .Yep. It's a game you're playing
 
-=== tutorial_pre_start_a ===
-[location]tutorial[/location]
+=== generic_take ===
+.You try to take. Huh, weird. Nothing happens
 
-.Click words to [verb]start[/start]
+=== tutorial_pre_start_a ===
+<location>tutorial</location>
+<rule>clearHistory</rule>
+
+.Click words to <verb>start</start>
     * start
     -> tutorial_start_a
     * start__game
@@ -23,7 +30,7 @@
 
     
 === tutorial_start_a ===
-.Welcome to the tutorial! You've already learnt to click word to proceed. All that's left to realise is that in this [noun]game , sometimes you'll want to [verb]take it [noun]back .
+.Welcome to the tutorial! You've already learnt to click word to proceed. All that's left to realise is that in this <noun>game</noun> , sometimes you'll want to <verb>take</verb> it <noun>back</noun> .
 
     * start__game
         -> tutorial_start_b
@@ -31,7 +38,7 @@
         -> tutorial_start_b
         
 === tutorial_start_b ===
-.Hey, this is the tutorial. You can't start the game from here! [verb]take a breather, and head on [noun]back .
+.Hey, this is the tutorial. You can't start the game from here! <verb>take</verb> a breather, and head on <noun>back</noun> .
 
     * start__game
         -> tutorial_start_b

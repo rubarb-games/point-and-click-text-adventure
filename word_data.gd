@@ -9,21 +9,19 @@ var isDiscoverable:bool = false
 
 func evaluateType(wDict:Dictionary):
 	match wDict["tag"]:
-		"[noun]":
+		"<noun>":
 			status = wordStatus.NOUN
-		"[verb]":
+			isDiscoverable = true
+		"<verb>":
 			status = wordStatus.VERB
-		"[location]":
+			isDiscoverable = true
+		"<location>":
 			status = wordStatus.OTHER
 			Global.LocationEncountered.emit(word)
 			return false
-		"[generic]":
+		"<rule>":
 			status = wordStatus.OTHER
-			Global.RuleEncountered.emit("generic")
-			return false
-		"[historyClear]":
-			status = wordStatus.OTHER
-			Global.RuleEncountered.emit("historyClear")
+			Global.RuleEncountered.emit(word)
 			return false
 		_:
 			status = wordStatus.OTHER

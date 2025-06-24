@@ -39,7 +39,7 @@ func evaluateText():
 	print("EVALUATING TEXT:")
 	print("Story: "+str(currentString))
 	instantlyKillAllText()
-	await get_tree().process_frame
+	#await get_tree().process_frame
 	Global.DisplayDebugText.emit("IN TEXT MANAGERRRR!")
 	#If this is text to be displayed, indicated by the arrow "^"
 	#if (currentString[0] == "."):
@@ -68,29 +68,32 @@ func fetchText():
 	currentString = tempString
 	
 func processTextRegex():
+	print("PROCESSEREO")
 	var rx = RegEx.new()
-	rx.compile(r'(\[[^\]]+\])|([^\[]+)')
+	rx.compile(r'(<[^>]+>)|([^<]+)')
 	var ry = RegEx.new()
 	ry.compile(r"\b\w+\b")
 
-	var result = rx.search_all(currentString.strip_edges())
+	var result = rx.search_all(currentString)
 	var active_tags = []
 	var word_list = []
 	
 	for m in result:
 		var tag = m.get_string(1)
 		var plain = m.get_string(2)
+		print("TAG IS: "+str(tag)+" - FOR "+str(plain))
 		if tag != "":
-			if (!tag.begins_with("[/")):
+			if (!tag.begins_with("</")):
 				active_tags.append(tag)
 			else:
 				var tag_name = tag.substr(2,tag.length() - 3)
-				for i in range(active_tags.size() - 1,-1,1):
-					if active_tags[i].begins_with("[%s", % tag_name):
+				print(tag_name)
+				for i in range(active_tags.size()):
+					if active_tags[i].begins_with("<"+tag_name):
 						active_tags.remove_at(i)
 						break
 		elif plain != "":
-			if (active_tags.size() > 0):
+			if (active_tags.size() > 0 and false):
 				var entry = {
 					"word": plain,
 					"tag": active_tags[-1]
@@ -102,16 +105,14 @@ func processTextRegex():
 					var w = wMatches.get_string()
 					var entry = {
 						"word": w,
-						"tag": active_tags[-1] if active_tags.size() > 0  else null
+						"tag": active_tags.back() if active_tags.size() > 0  else null
 					}
 					word_list.append(entry)
 					
 	var s:String = ""
 	var butt:WordButton
 	
-	print("Processing words: ")
 	for b in word_list:
-		print("WORD: "+str(b))
 		var wD = WordData.new()
 		wD.word = b["word"]
 		#If evaluateType() returns a rule, skip adding a button
@@ -124,7 +125,7 @@ func processTextRegex():
 			butt.wData = wD
 			wordButtons.append(butt)
 			if (wD.isDiscoverable):
-				if (!checkIfWordIsDiscovered(b.word)):
+				if (!checkIfWordIsDiscovered(wD.word)):
 					butt.SetInteractible()
 					butt.toggleDrifting(true)
 					butt.updateWord()
@@ -134,15 +135,9 @@ func processTextRegex():
 				butt.fadeIn()
 	
 	updateLayout()
-
-
-	
-	print("WORD LIST: ")
-	for w in word_list:
-		print(w)
 	
 func processText():
-	#print("FETCHED! "+currentString)
+	#eprint("FETCHED! "+currentString)
 	var wordsRaw:Array = currentString.split(" ")
 	var words:Array[WordData] = []
 	var tWord:WordData
@@ -157,10 +152,8 @@ func processText():
 			tw = w.split("]")
 			match tw[0]:
 				"noun":
-					print("YEP! NOUN!")
 					tWord.status = WordData.wordStatus.NOUN
 				"verb":
-					print("YEP! VERB!")
 					tWord.status = WordData.wordStatus.VERB
 			tWord.isDiscoverable = true
 			w = tw[1]
@@ -192,7 +185,6 @@ func processText():
 	updateLayout()
 
 func checkIfWordIsDiscovered(w:String):
-	print("CHECKING WORDS!")
 	var wordButtons:Array = InventoryManagerHandle.inventoryAreaHandle.get_children() as Array[WordButton]
 	
 	for item in wordButtons:
@@ -214,12 +206,12 @@ func updateLayout():
 	currentCaret[0] -= idealLineWidth / 2
 	
 	var tSize
-	print("Caret is: "+str(currentCaret))
-	print("--------------")
+	#print("Caret is: "+str(currentCaret))
+	#print("--------------")
 	for word in allWords:
 		word = word as WordButton
 		word.global_position = currentCaret + lineStart
-		print("Word is: "+str(word.word)+" and the pos is: "+str(word.global_position))
+		#print("Word is: "+str(word.word)+" and the pos is: "+str(word.global_position))
 		tSize = word.size
 		currentCaret[0] += tSize[0] + idealHoriSpacing
 		if (currentCaret[0] > idealLineWidth):
@@ -228,6 +220,7 @@ func updateLayout():
 		
 
 func OnStoryProgressed():
+	pass
 	evaluateText()
 
 func OnStoryChoiceMade(i):

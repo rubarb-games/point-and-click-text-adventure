@@ -18,7 +18,7 @@ var locationChoices:Array
 
 var savedState:String
 
-var previousStates:Array[String]
+var previousStates:Array[Dictionary]
 
 func _ready():
 	_ink_player.connect("loaded",_story_loaded)
@@ -58,9 +58,10 @@ func _continued(text, tags):
 		print("Text is empty.. returning")
 		return
 		
-	#print(text)
+	print("CONTINUING STORY ONTO: "+str(text))
 	currentStoryText = text
 	Global.StoryProgressed.emit()
+	#print("CURRENT CHOIES: "+str(currentChoices))
 	_ink_player.continue_story()
 
 
@@ -89,7 +90,7 @@ func OnTextCleared():
 	#Add to undo queue
 	if (previousStates.size() > 0):
 		var prSjs:JSON = JSON.new()
-		var dataA = prSjs.parse_string(previousStates.back())
+		var dataA = prSjs.parse_string(previousStates.back()["state"])
 		var dataB = prSjs.parse_string(_ink_player.get_state())
 		
 		if (dataA["flows"]["DEFAULT_FLOW"]["outputStream"][0] != dataB["flows"]["DEFAULT_FLOW"]["outputStream"][0]):
@@ -98,21 +99,22 @@ func OnTextCleared():
 				"state": _ink_player.get_state(),
 				"stateName": currentCommand
 			}
-			previousStates.append(_ink_player.get_state())
+			previousStates.append(state)
 	else:
 		var state:Dictionary = {
 			"state": _ink_player.get_state(),
 			"stateName": currentCommand
 		}
-		previousStates.append(_ink_player.get_state())
+		previousStates.append(state)
+		print("Prev states: "+str(previousStates))
 	
 	_select_choice(currentChoiceIndex)
 
 func _select_choice(index):
 	#Add to undo queue
 	#previousStates.append(_ink_player.get_state())
-	
-	_ink_player.choose_choice_index(index)
+	if (index != -1):
+		_ink_player.choose_choice_index(index)
 	_ink_player.continue_story()
 
 func OnGetState():
@@ -121,6 +123,7 @@ func OnGetState():
 func OnGoBack():
 	if (previousStates.size() > 0):
 		var tmpState = previousStates.pop_back()
+		print("TEMPSTATE: "+str(tmpState))
 		_ink_player.set_state(tmpState["state"])
 		print(previousStates)
 		Global.DumpText.emit(false)
@@ -128,7 +131,6 @@ func OnGoBack():
 		
 		_continued(_ink_player.get_current_text(),null)
 	else:
-		pass
 		Global.TextPopup.emit("At the start of time...",commandManagerHandle.commandAreaHandle.global_position + (commandManagerHandle.commandAreaHandle.size / 2))
 
 func OnLocationEncountered(loc:String):
@@ -136,16 +138,28 @@ func OnLocationEncountered(loc:String):
 	if (locationName != loc):
 		locationAvailable = true
 		locationName = loc
-		locationChoices = currentChoices
+		for c in _ink_player.get_current_choices():
+			locationChoices.append({
+				"text": c.text,
+				"path": c.path_string_on_choice
+			})
 		
 func OnRuleEncountered(rule:String):
 	match rule:
 		"generic":
 			print("ENCOUNTERED RULE: GENERIC")
 			genericAvailable = true
-			genericChoices = currentChoices
-			_select_choice(0)
-		"historyClear":
+			genericChoices.clear()
+			for c in _ink_player.get_current_choices():
+				genericChoices.append({
+					"text": c.text,
+					"path": c.path_string_on_choice
+				})
+			Global.DumpText.emit()
+			#await get_tree().process_frame
+			Global.StoryChoiceMade.emit(0)
+			#_select_choice(0)
+		"clearHistory":
 			print("ENCOUNTERED RULE: HISOTYR CLEAR")
 			previousStates = []
 

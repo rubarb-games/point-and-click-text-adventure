@@ -42,22 +42,22 @@ func newCommand():
 func executeCommand():
 	Global.gamePaused = true
 	var tempWord = ""
+	var commandFound:bool = false
 	#for c in commandWord:
 	#	tempWord += c.word.to_lower()
 	#print("EXECUTING COMMAND: CHecking for word: "+str(tempWord))
 	if (verbRepresented):
 		tempWord += currentVerb.word.to_lower()
-		print("HEPPP"+str(tempWord))
 	if (nounRepresented):
 		tempWord += "_" + smallWordHandle.word.to_lower() + "_" + currentNoun.word.to_lower()
 		
-	print("IDK WHAT TO TELL YOUUUU"+str(tempWord))
 	await get_tree().process_frame
 	for a in storyManagerHandle.currentChoices:
 		print(str(tempWord)+" - Checking against: "+str(a.strip_edges()))
 		
 	var i = storyManagerHandle.currentChoices.find(tempWord.strip_edges())
 	if (i != -1):
+		commandFound = true
 		for b in commandWord:
 			b = b as WordButton
 			b.moveButtonToLocation(textAreaHandle, false, false)
@@ -69,8 +69,25 @@ func executeCommand():
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	elif (tempWord == "__back" or tempWord == "take__back"):
+		commandFound = true
 		Global.GoBack.emit()
 	else:
+		for s in storyManagerHandle.locationChoices:
+			if tempWord in s["text"] and !commandFound:
+				commandFound = true
+				storyManagerHandle._ink_player.choose_path(s["path"])
+				Global.StoryChoiceMade.emit(-1)
+				Global.CommandMade.emit(tempWord)
+				break
+		for p in storyManagerHandle.genericChoices:
+			if tempWord in p["text"] and !commandFound:
+				commandFound = true
+				print("FOUND!!!! IN "+p["text"])
+				storyManagerHandle._ink_player.choose_path(p["path"])
+				Global.StoryChoiceMade.emit(-1)
+				Global.CommandMade.emit(tempWord)
+				break
+		
 		Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
 		for d in commandWord:
 			d.shake()
