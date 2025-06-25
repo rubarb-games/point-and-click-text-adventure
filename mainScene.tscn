@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
 [ext_resource type="Shader" path="res://VHS.gdshader" id="4_14l1l"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
-[ext_resource type="PackedScene" path="res://word_popup.tscn" id="5_u7har"]
+[ext_resource type="PackedScene" uid="uid://1b12jmhpum8t" path="res://word_popup.tscn" id="5_u7har"]
 [ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
 [ext_resource type="Resource" uid="uid://utq2hsph8aje" path="res://Assets/Game_B.json" id="8_uqts1"]
 [ext_resource type="Shader" uid="uid://c1vdikc7ejqht" path="res://lavacloud.gdshader" id="8_vuu3o"]

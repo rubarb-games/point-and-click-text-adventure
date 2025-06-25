@@ -75,26 +75,15 @@ func executeCommand():
 	else:
 		for s in storyManagerHandle.locationChoices:
 			if tempWord in s["text"] and !commandFound:
-				if (s["path"] == storyManagerHandle.lastChoiceMade):
-					pass
-					Global.DisplayDebugText2.emit("WOOOW!")
-				else:
-					commandFound = true
-					storyManagerHandle._ink_player.choose_path(s["path"])
-					#await get_tree().process_frame
-					while storyManagerHandle._ink_player.can_continue:
-						storyManagerHandle._ink_player.continue_story()
-					Global.StoryChoiceMade.emit(-1)
-					Global.CommandMade.emit(tempWord)
-					break
+				print("HELL YEAH LOCATION THING!!!")
+				commandFound = true
+				storyManagerHandle.jumpToPath(s["path"])
+				Global.CommandMade.emit(tempWord)
+				break
 		for p in storyManagerHandle.genericChoices:
 			if tempWord in p["text"] and !commandFound:
 				commandFound = true
-				storyManagerHandle._ink_player.choose_path(p["path"])
-				while storyManagerHandle._ink_player.can_continue:
-					storyManagerHandle._ink_player.continue_story()
-				#await get_tree().process_frame
-				Global.StoryChoiceMade.emit(-1)
+				storyManagerHandle.jumpToPath(p["path"])
 				Global.CommandMade.emit(tempWord)
 				break
 	

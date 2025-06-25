@@ -7,7 +7,8 @@ var currentStoryText:String
 var currentChoices:Array
 var currentChoiceIndex:int = -1
 
-var currentCommand:String = "start"
+var currentCommand:String = ""
+var lastCommand:String = ""
 
 var genericAvailable:bool = false
 var genericChoices:Array
@@ -19,6 +20,8 @@ var locationChoices:Array
 var savedState:String
 var lastChoiceMade:String = "Cool"
 var cachedState
+
+var allGlobalVariables:Dictionary
 
 var previousStates:Array[Dictionary]
 
@@ -66,6 +69,23 @@ func _continued(text, tags):
 	#print("CURRENT CHOIES: "+str(currentChoices))
 	_ink_player.continue_story()
 
+func SaveAllVariables():
+	var gVars = _ink_player._story.variables_state._global_variables
+	for obj in gVars:
+		allGlobalVariables[obj["name"]] = _ink_player.get_variable(obj["name"])
+		
+	
+func LoadAllVariables():
+	for name in allGlobalVariables.keys():
+		_ink_player.set_variable(name,allGlobalVariables[name])
+
+func resetState(wVars:bool = false):
+	if wVars:
+		SaveAllVariables()
+	_ink_player.reset()
+	if wVars:
+		LoadAllVariables()
+
 func forceChoices():
 	currentChoices = []
 	for c in _ink_player.current_choices:
@@ -75,9 +95,9 @@ func forceChoices():
 func _prompt_choices(choices):
 	currentChoices = []
 	if !choices.is_empty():
-		for c in choices:
+		for c in range(choices.size()):
 			#print("Adding choice: "+str(c.text))
-			currentChoices.append(c.text)
+			currentChoices.append(choices[c].text)
 		
 		# In a real-world scenario, _select_choice' could be
 		# connected to a signal, like 'Button.pressed'.
@@ -113,7 +133,7 @@ func addStateToHistory(choice):
 		if (dataA != dataB):
 			var state:Dictionary = {
 				"state": choice,
-				"stateName": currentCommand,
+				"stateName": lastCommand,
 				"choices": _ink_player.get_current_choices().duplicate(),
 				"fullState": cachedState
 			}
@@ -169,38 +189,46 @@ func OnGoBack():
 	if (previousStates.size() > 0):
 		var tmpState = previousStates[previousStates.size()-1].duplicate()
 		previousStates.remove_at(previousStates.size()-1)
-		#_ink_player.set_state(tmpState["fullState"])
-		#_ink_player.continue_story()
+
+		_ink_player.reset()
 		_ink_player.choose_path(tmpState["state"])
-		#forceChoices()
-		#Global.CommandMade.emit(tmpState["stateName"])
-		#lastChoiceMade = tmpState["state"]
-		#currentChoices = []
-		#for c in tmpState["choices"]:
-		#	currentChoices.append(c)
-		while _ink_player.can_continue:
-			_ink_player.continue_story()
-			
+		_ink_player.continue_story()
+
+		_prompt_choices(tmpState['choices'])
+	
 		print("Choices: "+str(_ink_player.get_current_choices()))
 		Global.StoryProgressed.emit()
+		Global.CommandMade.emit(tmpState["stateName"])
 		lastChoiceMade = tmpState["state"]
 		#_continued(_ink_player.get_current_text(),null)
 	else:
 		Global.TextPopup.emit("At the start of time...",commandManagerHandle.commandAreaHandle.global_position + (commandManagerHandle.commandAreaHandle.size / 2))
 
+func jumpToPath(p):
+	#lastChoiceMade = _ink_player.get_current_path()
+	addStateToHistory(lastChoiceMade)
+	resetState(true)
+	_ink_player.choose_path(p)
+	_ink_player.continue_story()
+	Global.StoryProgressed.emit()
+
 func OnLocationEncountered(loc:String):
+	await get_tree().process_frame
 	print("ENCOUNTERED RULE: LOCATION")
-	return
-	#if (locationName != loc):
-	#	locationAvailable = true
-	#	locationName = loc
-	for c in _ink_player.get_current_choices():
+	if (loc == locationName):
+		return
+		
+	locationAvailable = true
+	locationName = loc
+	locationChoices = []
+	for c in _ink_player.get_current_choices().duplicate():
 		locationChoices.append({
 			"text": c.text,
 			"path": c.path_string_on_choice
 		})
 		
 func OnRuleEncountered(rule:String):
+	await get_tree().process_frame
 	match rule:
 		"generic":
 			print("ENCOUNTERED RULE: GENERIC")
@@ -211,15 +239,14 @@ func OnRuleEncountered(rule:String):
 					"text": c.text,
 					"path": c.path_string_on_choice
 				})
-			#Global.DumpText.emit()
-			#await get_tree().process_frame
 			Global.StoryChoiceMade.emit(0)
-			#_select_choice(0)
 		"clearHistory":
 			print("ENCOUNTERED RULE: HISTORY CLEAR")
 			previousStates = []
+			#lastChoiceMade = ""
 
 func OnCommandMade(com:String):
+	lastCommand = currentCommand
 	currentCommand = com
 	pass
 

@@ -67,7 +67,6 @@ func fetchText():
 	currentString = tempString
 	
 func processTextRegex():
-	#print("PROCESSEREO")
 	var rx = RegEx.new()
 	rx.compile(r'(<[^>]+>)|([^<]+)')
 	var ry = RegEx.new()
@@ -219,7 +218,6 @@ func updateLayout():
 		
 
 func OnStoryProgressed():
-	pass
 	evaluateText()
 
 func OnStoryChoiceMade(i):

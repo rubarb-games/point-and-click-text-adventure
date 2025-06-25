@@ -14,17 +14,20 @@ Is it <rule>generic</rule> though? If nothing else it is happening
 .Yep. It's a game you're playing
 
 === generic_take ===
-.You try to take. Huh, weird. Nothing happens
+You try to take. Huh, weird. Nothing happens
+
+
 
 === tutorial_START_1 ===
 <location>tutorial</location>
+<rule>NoLocationCommands</rule>
 <rule>clearHistory</rule>
 Click words to <verb>start</start>
 
     * start
     -> tutorial_start_2
     * start__game
-    -> tutorial_progress_a
+    -> office_a
 
     
 === tutorial_start_2 ===
@@ -38,23 +41,12 @@ Click words to <verb>start</start>
 === tutorial_start_b ===
 .Hey, this is the tutorial. You can't start the game from here! <verb>take</verb> a breather, and head on <noun>back</noun> .
 
-    * start__game
-        -> tutorial_start_b
-    * start
-        -> tutorial_start_b
-
 === cheat ===
 .Ayyy, what is this? How did you get here??
         
-
-=== tutorial_progress_a ===
-.You've started the game. Congratulations! I'm proud of you. Take a <verb>look</verb>
-
-    *look
-        -> office_a
-
 === office_a === 
 <location>office</office>
+<rule>clearHistory</rule>
 Another late night, another blank document. The filtered light of your monitor dries your eyes out as you <verb>look</verb> at the blinking cursor. How long have you been sitting at this <noun>desk</noun> ? An hour? A day? A year? A lifetime, spent watching the little black bar blink on and off. Aren’t writers supposed to <verb>write</verb> ? And yet, you haven’t written a <noun>poem</noun> since [REDACTED]. You haven’t even come in the <noun>vicinity</noun> of writing a poem. Is tonight the night?
 
     * write__poem
