@@ -30,7 +30,7 @@ bool cloud_layer(float x, float y, float h) {
 
 
 void fragment() {
-	float y = 1.0 - SCREEN_UV.y;
+	float y = 1.0 - UV.y;
 
 	for (int i = 0; i < layer_count; i++) {
 		float h = float(i) / float(layer_count - 1);
