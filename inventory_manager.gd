@@ -92,4 +92,8 @@ func OnInteractiveButtonClicked(word, buttonHandle):
 	addToInventory(buttonHandle,false)
 
 func OnCommandButtonClicked(word, buttonHandle, deleteEntry):
-	addToInventory(buttonHandle, true)
+	for i in inventoryAreaHandle.get_children():
+		if i.word == buttonHandle.word:
+			buttonHandle.moveButtonToLocation(i,true)
+			i.enable()
+	#addToInventory(buttonHandle, true)

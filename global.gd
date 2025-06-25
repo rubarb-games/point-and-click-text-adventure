@@ -18,6 +18,8 @@ signal DumpText
 signal GoBack
 
 signal DisplayDebugText #TEXT
+signal DisplayDebugText2
+signal DisplayDebugText3
 
 signal TextPopup #TEXT, #POSITION
 

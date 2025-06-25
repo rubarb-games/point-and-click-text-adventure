@@ -118,7 +118,6 @@ scroll_active = false
 autowrap_mode = 0
 
 [node name="Debug3" type="RichTextLabel" parent="DebugManager"]
-custom_minimum_size = Vector2(200, 600)
 layout_mode = 0
 offset_left = -32.6699
 offset_top = 206.945

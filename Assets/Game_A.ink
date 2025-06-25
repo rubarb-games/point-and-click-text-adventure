@@ -1,11 +1,9 @@
 Is it <rule>generic</rule> though? If nothing else it is happening
 
     * auto_start
-    -> tutorial_pre_start_a
+    -> tutorial_START_1
     * game
     -> generic_game
-    * look
-    -> generic_look
     * take
     -> generic_take
     
@@ -18,18 +16,18 @@ Is it <rule>generic</rule> though? If nothing else it is happening
 === generic_take ===
 .You try to take. Huh, weird. Nothing happens
 
-=== tutorial_pre_start_a ===
+=== tutorial_START_1 ===
 <location>tutorial</location>
 <rule>clearHistory</rule>
+Click words to <verb>start</start>
 
-.Click words to <verb>start</start>
     * start
-    -> tutorial_start_a
+    -> tutorial_start_2
     * start__game
     -> tutorial_progress_a
 
     
-=== tutorial_start_a ===
+=== tutorial_start_2 ===
 .Welcome to the tutorial! You've already learnt to click word to proceed. All that's left to realise is that in this <noun>game</noun> , sometimes you'll want to <verb>take</verb> it <noun>back</noun> .
 
     * start__game
@@ -45,19 +43,19 @@ Is it <rule>generic</rule> though? If nothing else it is happening
     * start
         -> tutorial_start_b
 
-=== tutorial_progress_a ===
-.You've started the game. Congratulations! I'm proud of you. Take a [verb]look .
-    
-    *look
-        -> office_a
-
 === cheat ===
 .Ayyy, what is this? How did you get here??
         
-=== office_a === 
-[location]office[/office]
 
-.Another late night, another blank document. The filtered light of your monitor dries your eyes out as you [verb]look at the blinking cursor. How long have you been sitting at this [noun]desk ? An hour? A day? A year? A lifetime, spent watching the little black bar blink on and off. Aren’t writers supposed to [verb]write ? And yet, you haven’t written a [noun]poem since [REDACTED]. You haven’t even come in the [noun]vicinity of writing a poem. Is tonight the night?
+=== tutorial_progress_a ===
+.You've started the game. Congratulations! I'm proud of you. Take a <verb>look</verb>
+
+    *look
+        -> office_a
+
+=== office_a === 
+<location>office</office>
+Another late night, another blank document. The filtered light of your monitor dries your eyes out as you <verb>look</verb> at the blinking cursor. How long have you been sitting at this <noun>desk</noun> ? An hour? A day? A year? A lifetime, spent watching the little black bar blink on and off. Aren’t writers supposed to <verb>write</verb> ? And yet, you haven’t written a <noun>poem</noun> since [REDACTED]. You haven’t even come in the <noun>vicinity</noun> of writing a poem. Is tonight the night?
 
     * write__poem
         -> office_a_write_poem
@@ -80,7 +78,7 @@ Is it <rule>generic</rule> though? If nothing else it is happening
 .It's all about white knuckling your way through life. It's just words, you keep saying, yet they won't come out.
 
 === office_a_look_vicinity ===
-.You’re in your office. It’s night out, and the [noun]curtains are drawn; the barest HINT of moonlight seeps through. The bare [noun]bulb that dangles from a crimped wire buzzes annoyingly overhead. Your [noun]desk is cluttered, as usual. There’s only one [noun]door to [noun]exit out of here, leading to the upstairs hallway.
+.You’re in your office. It’s night out, and the <noun>curtains</noun> are drawn; the barest HINT of moonlight seeps through. The bare <noun>bulb</noun> that dangles from a crimped wire buzzes annoyingly overhead. Your <noun>desk</noun> is cluttered, as usual. There’s only one <noun>door</noun> to <noun>exit</noun> out of here, leading to the upstairs hallway.
 
     * open__curtains
         -> office_a_open_curtains
@@ -102,7 +100,7 @@ Is it <rule>generic</rule> though? If nothing else it is happening
         -> office_a_enter_hallway
 
 === office_a_look_desk ===
-.Your computer is on, newmasterpiece.doc is [verb]open , and no words are written down - same as every night. The surface is a graveyard of half-drunk [noun]coffee cups, crisp packets, soda bottles, and takeout coupons.
+.Your computer is on, newmasterpiece.doc is <verb>open</verb> , and no words are written down - same as every night. The surface is a graveyard of half-drunk <noun>coffee</noun> cups, crisp packets, soda bottles, and takeout coupons.
     
     * take__coffee
         -> office_a_take_coffee
@@ -118,13 +116,13 @@ Is it <rule>generic</rule> though? If nothing else it is happening
 
 
 === office_a_take_coffee ===
-.Eurgh, even you aren’t desperate enough for cold [noun]coffee dregs.
+.Eurgh, even you aren’t desperate enough for cold <noun>coffee</noun> dregs.
 
     * force__coffee
     -> office_a_force_coffee
 
 === office_a_open_curtains ===
-.It’s a [noun]window
+.It’s a <noun>window</noun>
 
     * open__window
     -> office_a_open_window
@@ -138,7 +136,7 @@ Is it <rule>generic</rule> though? If nothing else it is happening
     -> office_a_look_window
 
 === office_a_look_curtains ===
-.They're long, beige annd made out of thick fabric. As to block out any light if you were to [verb]close them
+.They're long, beige annd made out of thick fabric. As to block out any light if you were to <verb>close</verb> them
 
     * look_at_window
     -> office_a_look_window
@@ -156,13 +154,13 @@ Is it <rule>generic</rule> though? If nothing else it is happening
     -> office_a_look_curtains
 
 === office_a_look_window ===
-.It’s nighttime, but the pale glow of a crescent moon illuminates the wall your office faces in an insipid [verb]cast . You try to get inspired by the pattern of blank grey stucco. You [verb]enter a trance of swirling meters and metaphors for ennui. You can’t think of anything that rhymes with stucco.
+.It’s nighttime, but the pale glow of a crescent moon illuminates the wall your office faces in an insipid <verb>cast</verb> . You try to get inspired by the pattern of blank grey stucco. You <verb>enter a trance of swirling meters and metaphors for ennui. You can’t think of anything that rhymes with stucco.
 
 === office_a_look_at_door ===
-.It's a door, wooden. Metal [verb]handle .
+.It's a door, wooden. Metal <verb>handle</verb> .
 
 === office_a_open_door ===
-.The upstairs [noun]hallway waits beyond
+.The upstairs <noun>hallway</noun> waits beyond
 
     *enter__hallway
     -> office_a_enter_hallway

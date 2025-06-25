@@ -51,9 +51,10 @@ func executeCommand():
 	if (nounRepresented):
 		tempWord += "_" + smallWordHandle.word.to_lower() + "_" + currentNoun.word.to_lower()
 		
-	await get_tree().process_frame
+	#await get_tree().process_frame
 	for a in storyManagerHandle.currentChoices:
-		print(str(tempWord)+" - Checking against: "+str(a.strip_edges()))
+		pass
+		#print(str(tempWord)+" - Checking against: "+str(a.strip_edges()))
 		
 	var i = storyManagerHandle.currentChoices.find(tempWord.strip_edges())
 	if (i != -1):
@@ -74,24 +75,34 @@ func executeCommand():
 	else:
 		for s in storyManagerHandle.locationChoices:
 			if tempWord in s["text"] and !commandFound:
-				commandFound = true
-				storyManagerHandle._ink_player.choose_path(s["path"])
-				Global.StoryChoiceMade.emit(-1)
-				Global.CommandMade.emit(tempWord)
-				break
+				if (s["path"] == storyManagerHandle.lastChoiceMade):
+					pass
+					Global.DisplayDebugText2.emit("WOOOW!")
+				else:
+					commandFound = true
+					storyManagerHandle._ink_player.choose_path(s["path"])
+					#await get_tree().process_frame
+					while storyManagerHandle._ink_player.can_continue:
+						storyManagerHandle._ink_player.continue_story()
+					Global.StoryChoiceMade.emit(-1)
+					Global.CommandMade.emit(tempWord)
+					break
 		for p in storyManagerHandle.genericChoices:
 			if tempWord in p["text"] and !commandFound:
 				commandFound = true
-				print("FOUND!!!! IN "+p["text"])
 				storyManagerHandle._ink_player.choose_path(p["path"])
+				while storyManagerHandle._ink_player.can_continue:
+					storyManagerHandle._ink_player.continue_story()
+				#await get_tree().process_frame
 				Global.StoryChoiceMade.emit(-1)
 				Global.CommandMade.emit(tempWord)
 				break
-		
-		Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
-		for d in commandWord:
-			d.shake()
-		await get_tree().create_timer(0.4).timeout	
+	
+		if (!commandFound):
+			Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
+			for d in commandWord:
+				d.shake()
+			await get_tree().create_timer(0.4).timeout	
 	
 	Global.gamePaused = false
 	newCommand()
@@ -158,7 +169,8 @@ func OnInventoryInteraction(word, buttonHandle):
 	tWord.updateData(buttonHandle)
 	tWord.SetCommands()
 	#buttonHandle.disable()
-	buttonHandle.moveButtonToLocation(tWord)
+	buttonHandle.disable()
+	#buttonHandle.moveButtonToLocation(tWord)
 	
 	commandWord.append(tWord)
 	

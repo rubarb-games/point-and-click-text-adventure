@@ -91,14 +91,21 @@ func updateData(button:WordButton):
 
 func disable():
 	previousColor = defaultColor
-	#defaultColor = disabledColor
-	defaultColor = highlightedColor
+	defaultColor = disabledColor
+	#defaultColor = highlightedColor
 	buttonHandle.self_modulate = defaultColor
 	active = false
 	toggleDrifting(false)
 
+func makeNormal():
+	defaultColor = highlightedColor
+	buttonHandle.self_modulate = defaultColor
+	active = false
+	toggleDrifting(false)
+	
 func enable():
 	defaultColor = previousColor
+	buttonHandle.self_modulate = defaultColor
 	active = true
 
 func SetInteractible():
@@ -134,14 +141,14 @@ func Die():
 	self.queue_free()
 
 func OnClicked():
-	if (Global.gamePaused):
+	if (Global.gamePaused or !active):
 		return
 	print("Clicked on word: "+str(word)+" !!!")
 	match bS:
 		buttonStatus.TEXTLOG_INTERACTIBLE:
 			if (active):
 				print("And it's discoverable??")
-				disable()
+				makeNormal()
 				Global.InteractableWordClicked.emit(word,self)
 		buttonStatus.INVENTORY:
 			print("And its an inventory item")

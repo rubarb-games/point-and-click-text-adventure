@@ -36,11 +36,10 @@ func _process(delta):
 	
 func evaluateText():
 	currentString = storyManagerHandle.currentStoryText
-	print("EVALUATING TEXT:")
-	print("Story: "+str(currentString))
+	#print("EVALUATING TEXT:")
+	#print("Story: "+str(currentString))
 	instantlyKillAllText()
 	#await get_tree().process_frame
-	Global.DisplayDebugText.emit("IN TEXT MANAGERRRR!")
 	#If this is text to be displayed, indicated by the arrow "^"
 	#if (currentString[0] == "."):
 	#	currentString = currentString.substr(1)
@@ -48,7 +47,7 @@ func evaluateText():
 		#processText()
 
 func dumpText(alsoProgress:bool = true):
-	print("DUMPING!")
+	#print("DUMPING!")
 	for w in range(wordButtons.size()):
 		if (is_instance_valid(wordButtons[w])):
 			wordButtons[w].Die()
@@ -68,7 +67,7 @@ func fetchText():
 	currentString = tempString
 	
 func processTextRegex():
-	print("PROCESSEREO")
+	#print("PROCESSEREO")
 	var rx = RegEx.new()
 	rx.compile(r'(<[^>]+>)|([^<]+)')
 	var ry = RegEx.new()
@@ -81,13 +80,13 @@ func processTextRegex():
 	for m in result:
 		var tag = m.get_string(1)
 		var plain = m.get_string(2)
-		print("TAG IS: "+str(tag)+" - FOR "+str(plain))
+		#print("TAG IS: "+str(tag)+" - FOR "+str(plain))
 		if tag != "":
 			if (!tag.begins_with("</")):
 				active_tags.append(tag)
 			else:
 				var tag_name = tag.substr(2,tag.length() - 3)
-				print(tag_name)
+				#print(tag_name)
 				for i in range(active_tags.size()):
 					if active_tags[i].begins_with("<"+tag_name):
 						active_tags.remove_at(i)
@@ -133,7 +132,7 @@ func processTextRegex():
 			else:
 				butt.updateWord()
 				butt.fadeIn()
-	
+	await get_tree().process_frame
 	updateLayout()
 	
 func processText():
@@ -188,7 +187,7 @@ func checkIfWordIsDiscovered(w:String):
 	var wordButtons:Array = InventoryManagerHandle.inventoryAreaHandle.get_children() as Array[WordButton]
 	
 	for item in wordButtons:
-		print("Item == "+str(item.word))
+		#print("Item == "+str(item.word))
 		if (item.word == w):
 			return true
 	return false
