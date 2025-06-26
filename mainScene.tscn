@@ -1,12 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://bfflx0l6wr1es"]
+[gd_scene load_steps=19 format=3 uid="uid://bfflx0l6wr1es"]
 
 [ext_resource type="Script" uid="uid://4c8c8m2yqdsp" path="res://story_manager.gd" id="1_fo1y6"]
 [ext_resource type="Script" uid="uid://dfvrhy22uc4fy" path="res://textManager.gd" id="1_vfj14"]
 [ext_resource type="PackedScene" uid="uid://deucpxt1oo03y" path="res://word_button.tscn" id="2_7wh3j"]
 [ext_resource type="Script" uid="uid://liaj2kxrcyd3" path="res://inventory_manager.gd" id="2_31r86"]
 [ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
-[ext_resource type="Shader" path="res://VHS.gdshader" id="4_14l1l"]
+[ext_resource type="Shader" uid="uid://c5o2c1v0djkwo" path="res://HAND.gdshader" id="3_ykwv5"]
+[ext_resource type="Shader" uid="uid://ichfut7b6lxc" path="res://VHS.gdshader" id="4_14l1l"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
+[ext_resource type="Texture2D" uid="uid://bciahps44uc2k" path="res://Assets/thehandofbell.png" id="4_ykwv5"]
 [ext_resource type="PackedScene" uid="uid://1b12jmhpum8t" path="res://word_popup.tscn" id="5_u7har"]
 [ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
 [ext_resource type="Resource" uid="uid://utq2hsph8aje" path="res://Assets/Game_B.json" id="8_uqts1"]
@@ -16,20 +18,23 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_14l1l"]
 shader = ExtResource("8_vuu3o")
-shader_parameter/bottom_color = Color(0.0802742, 0.0851853, 0.0790368, 1)
-shader_parameter/top_color = Color(0, 0, 0, 1)
+shader_parameter/bottom_color = Color(0.41, 0.090200014, 0.30873004, 1)
+shader_parameter/top_color = Color(0.14439999, 0.07599999, 0.19, 1)
 shader_parameter/tex2 = ExtResource("9_0pyiw")
 shader_parameter/tex = ExtResource("9_0pyiw")
-shader_parameter/layer_count = 2
-shader_parameter/time_scale = 0.109
-shader_parameter/base_intensity = 0.146
+shader_parameter/layer_count = 3
+shader_parameter/time_scale = 0.01200000057
+shader_parameter/base_intensity = 0.098000004655
 shader_parameter/size = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nlk40"]
+shader = ExtResource("3_ykwv5")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u7har"]
 shader = ExtResource("4_14l1l")
-shader_parameter/wiggle = 0.03
-shader_parameter/wiggle_speed = 25.0
-shader_parameter/smear = 0.5
+shader_parameter/wiggle = 0.03999999910592
+shader_parameter/wiggle_speed = 64.0
+shader_parameter/smear = 0.5850000277875
 shader_parameter/blur_samples = 7
 
 [node name="Scene" type="Control"]
@@ -58,9 +63,22 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 1452.0
+offset_top = 952.0
+offset_right = 1786.1797
+offset_bottom = 1846.1797
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 3.1415927
 mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="The Hand of Bell" type="Sprite2D" parent="."]
+z_index = -1
+material = SubResource("ShaderMaterial_nlk40")
+position = Vector2(221.99997, 622.99994)
+scale = Vector2(0.39566764, 0.3956677)
+texture = ExtResource("4_ykwv5")
 
 [node name="ColorRect VHS" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_u7har")
@@ -217,15 +235,16 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
+visible = false
 z_index = -1
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -290.5
-offset_top = -21.0
-offset_right = -199.5
-offset_bottom = 2.0
+offset_left = -441.5
+offset_top = -173.0
+offset_right = 219.23907
+offset_bottom = -6.0
 grow_horizontal = 2
 theme = ExtResource("13_uqts1")
 text = "Inventory"
@@ -233,9 +252,10 @@ horizontal_alignment = 1
 
 [node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
 anchors_preset = 0
-offset_left = 5.0
-offset_right = 615.0
-offset_bottom = 166.0
+offset_left = 102.0
+offset_top = -38.0
+offset_right = 461.0
+offset_bottom = 135.0
 size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
