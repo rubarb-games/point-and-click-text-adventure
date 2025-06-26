@@ -38,7 +38,7 @@ func evaluateText():
 	currentString = storyManagerHandle.currentStoryText
 	#print("EVALUATING TEXT:")
 	#print("Story: "+str(currentString))
-	instantlyKillAllText()
+	#instantlyKillAllText()
 	#await get_tree().process_frame
 	#If this is text to be displayed, indicated by the arrow "^"
 	#if (currentString[0] == "."):
@@ -131,7 +131,7 @@ func processTextRegex():
 			else:
 				butt.updateWord()
 				butt.fadeIn()
-	await get_tree().process_frame
+	#await get_tree().process_frame
 	updateLayout()
 	
 func processText():
@@ -195,26 +195,56 @@ func updateLayout():
 	textAreaHandle.global_position = textAreaPosition
 	var allWords = textAreaHandle.get_children()
 	
-	var idealHoriOffset = 120
+	var idealHoriOffset = 0 #120
 	var lineStart = textAreaGuide.global_position + textAreaGuide.size / 2
-	var idealLineWidth = textAreaGuide.size.x / 2 - idealHoriOffset
-	var currentCaret:Vector2 = Vector2(0,0) - Vector2(idealLineWidth/2,0)
+	var idealLineWidth = textAreaGuide.size.x / 2 + idealHoriOffset
+	var startingCaretOffset:Vector2 = Vector2(0,-130)# - Vector2(idealLineWidth/2,0)
+	var currentCaret:Vector2 = startingCaretOffset
 	var idealHoriSpacing = 12
 	var idealVertiSpacing = 40
 	currentCaret[0] -= idealLineWidth / 2
 	
+	var row:Array[Array]
+	var rowItems:Array = []
+	
 	var tSize
 	#print("Caret is: "+str(currentCaret))
 	#print("--------------")
-	for word in allWords:
-		word = word as WordButton
+	for ind in range(allWords.size()) :
+		var word = allWords[ind] as WordButton
+		rowItems.append(word)
 		word.global_position = currentCaret + lineStart
 		#print("Word is: "+str(word.word)+" and the pos is: "+str(word.global_position))
 		tSize = word.size
-		currentCaret[0] += tSize[0] + idealHoriSpacing
-		if (currentCaret[0] > idealLineWidth):
-			currentCaret[0] = - idealLineWidth
+		
+		if (word.word == "N"):
+			word.setInvisible()
+			#word.updateWordText("-AA")
+			currentCaret[0] = -idealLineWidth/2
 			currentCaret[1] += idealVertiSpacing
+			row.append(rowItems.duplicate())
+			rowItems = []
+		else:
+			currentCaret[0] += tSize[0] + idealHoriSpacing
+			if (currentCaret[0] > idealLineWidth):
+				currentCaret[0] = -idealLineWidth/2
+				currentCaret[1] += idealVertiSpacing
+				row.append(rowItems.duplicate())
+				rowItems = []
+				
+	row.append(rowItems.duplicate())
+			
+	var rowTotalWidth
+	for r in row:
+		rowTotalWidth = (r.size() * idealHoriSpacing) + startingCaretOffset.x
+		for ri in r:
+			#print("WORDIN!")
+			var w = ri as WordButton
+			rowTotalWidth += w.size.x
+		var offset = (idealLineWidth / 2) - (rowTotalWidth / 2)
+		for ru in r:
+			ru.position.x += offset
+			
 		
 
 func OnStoryProgressed():

@@ -10,6 +10,8 @@ signal CommandInteractibleClicked
 signal CommandInteractibleClicked_Finished
 
 signal StoryProgressed
+signal StoryPartialProgressed
+
 signal OnMakeStoryChoice
 signal StoryTextCleared
 signal StoryChoiceMade

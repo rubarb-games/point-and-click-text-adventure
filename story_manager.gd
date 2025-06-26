@@ -6,6 +6,9 @@ extends Node
 var currentStoryText:String
 var currentChoices:Array
 var currentChoiceIndex:int = -1
+var pathJumpCached = false
+var goBackCached = false
+var pathToJumpTo:String = ""
 
 var currentCommand:String = ""
 var lastCommand:String = ""
@@ -22,6 +25,9 @@ var lastChoiceMade:String = "Cool"
 var cachedState
 
 var allGlobalVariables:Dictionary
+var allVisitCounts:Dictionary
+
+var firstLine:bool = false
 
 var previousStates:Array[Dictionary]
 
@@ -63,21 +69,29 @@ func _continued(text, tags):
 		print("Text is empty.. returning")
 		return
 		
-	#print("CONTINUING STORY ONTO: "+str(text))
-	currentStoryText = text
+	if (firstLine):
+		firstLine = false
+	else:
+		print("CONTINUING STORY ONTO: "+str(text))
+		currentStoryText = text
+	#Global.StoryProgressed.emit()
 	Global.StoryProgressed.emit()
 	#print("CURRENT CHOIES: "+str(currentChoices))
 	_ink_player.continue_story()
 
+func prepNewLine():
+	firstLine = true
+	currentStoryText = ""
+	#Global.DumpText.emit(false)
+
 func SaveAllVariables():
-	var gVars = _ink_player._story.variables_state._global_variables
-	for obj in gVars:
-		allGlobalVariables[obj["name"]] = _ink_player.get_variable(obj["name"])
-		
+	allGlobalVariables = _ink_player._story.variables_state._global_variables.duplicate(true)		
+	allVisitCounts = _ink_player._story.state._visit_counts.duplicate(true)
 	
 func LoadAllVariables():
 	for name in allGlobalVariables.keys():
 		_ink_player.set_variable(name,allGlobalVariables[name])
+	_ink_player._story.state._visit_counts = allVisitCounts.duplicate(true)
 
 func resetState(wVars:bool = false):
 	if wVars:
@@ -93,6 +107,8 @@ func forceChoices():
 		currentChoices.append(c.text)
 
 func _prompt_choices(choices):
+	#Global.StoryProgressed.emit()
+	
 	currentChoices = []
 	if !choices.is_empty():
 		for c in range(choices.size()):
@@ -108,17 +124,26 @@ func _path_chosen(argument, path):
 	#print("Argument: "+str(argument)+" - Path: "+str(path))	
 
 func _ended():
-	print("The End")
+	pass
+	#Global.StoryProgressed.emit()
+	#print("The End")
 
 func OnChoiceMade(choice):
 	pass
+	prepNewLine()
+	#currentStoryText = ""
 
 func OnMakeChoice(index):
 	currentChoiceIndex = index
 	#addStateToHistory()
 
-func OnTextCleared():	
-	_select_choice(currentChoiceIndex)
+func OnTextCleared():
+	if (goBackCached):
+		OnGoBack()
+	elif (pathJumpCached):
+		jumpToPath(pathToJumpTo)
+	else:
+		_select_choice(currentChoiceIndex)
 
 func addStateToHistory(choice):
 	#Add to undo queue
@@ -174,11 +199,20 @@ func _select_choice(index):
 	
 	#_ink_player.choose_path(currentChoices[index].path_string_on_choice)
 		_ink_player.choose_choice_index(index)
-	_ink_player.continue_story()
+	while _ink_player.can_continue:
+		_ink_player.continue_story()
+	#Global.StoryProgressed.emit()
+	#_ink_player.continue_story_maximally()
 
 func OnGetState():
 	savedState = _ink_player.get_state()
 	#var a = _ink_player.get_current_path()
+
+func canGoBack():
+	if (previousStates.size() > 0):
+		return true
+	else:
+		return false
 
 func OnGoBack():
 	var u = ""
@@ -190,14 +224,17 @@ func OnGoBack():
 		var tmpState = previousStates[previousStates.size()-1].duplicate()
 		previousStates.remove_at(previousStates.size()-1)
 
+		#currentStoryText = ""
+		goBackCached = false
+		prepNewLine()
 		_ink_player.reset()
 		_ink_player.choose_path(tmpState["state"])
 		_ink_player.continue_story()
 
 		_prompt_choices(tmpState['choices'])
-	
+		
 		print("Choices: "+str(_ink_player.get_current_choices()))
-		Global.StoryProgressed.emit()
+		#Global.StoryProgressed.emit()
 		Global.CommandMade.emit(tmpState["stateName"])
 		lastChoiceMade = tmpState["state"]
 		#_continued(_ink_player.get_current_text(),null)
@@ -205,12 +242,15 @@ func OnGoBack():
 		Global.TextPopup.emit("At the start of time...",commandManagerHandle.commandAreaHandle.global_position + (commandManagerHandle.commandAreaHandle.size / 2))
 
 func jumpToPath(p):
+	prepNewLine()
+	pathJumpCached = false
+	pathToJumpTo = ""
 	#lastChoiceMade = _ink_player.get_current_path()
 	addStateToHistory(lastChoiceMade)
 	resetState(true)
 	_ink_player.choose_path(p)
 	_ink_player.continue_story()
-	Global.StoryProgressed.emit()
+	#Global.StoryProgressed.emit()
 
 func OnLocationEncountered(loc:String):
 	await get_tree().process_frame

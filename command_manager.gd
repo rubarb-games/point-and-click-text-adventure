@@ -70,20 +70,31 @@ func executeCommand():
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	elif (tempWord == "__back" or tempWord == "take__back"):
-		commandFound = true
-		Global.GoBack.emit()
+		if (storyManagerHandle.canGoBack()):
+			commandFound = true
+			storyManagerHandle.goBackCached = true
+			Global.DumpText.emit(true)
+		else:
+			Global.TextPopup.emit("At the start of time...",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
+		#Global.GoBack.emit()
 	else:
 		for s in storyManagerHandle.locationChoices:
 			if tempWord in s["text"] and !commandFound:
 				print("HELL YEAH LOCATION THING!!!")
 				commandFound = true
-				storyManagerHandle.jumpToPath(s["path"])
+				storyManagerHandle.pathToJumpTo = s["path"]
+				storyManagerHandle.pathJumpCached = true
+				#storyManagerHandle.jumpToPath(s["path"])
+				Global.DumpText.emit(true)
 				Global.CommandMade.emit(tempWord)
 				break
 		for p in storyManagerHandle.genericChoices:
 			if tempWord in p["text"] and !commandFound:
 				commandFound = true
-				storyManagerHandle.jumpToPath(p["path"])
+				storyManagerHandle.pathToJumpTo = p["path"]
+				storyManagerHandle.pathJumpCached = true
+				#storyManagerHandle.jumpToPath(p["path"])
+				Global.DumpText.emit(true)
 				Global.CommandMade.emit(tempWord)
 				break
 	

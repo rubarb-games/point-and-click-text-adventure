@@ -1,3 +1,12 @@
+VAR winCon_bulbBuzzing = false
+VAR winCon_cupOfCoffee = false
+VAR winCon_atticFan = false
+VAR winCon_demoBanished = false
+VAR winCon_castBanishment = false
+
+VAR knowledgeOfDemon = false
+
+
 Is it <rule>generic</rule> though? If nothing else it is happening
 
     * auto_start
@@ -9,12 +18,15 @@ Is it <rule>generic</rule> though? If nothing else it is happening
     
 === generic_look ===
 .You look, but see nothing. Weird!
+-> DONE
 
 === generic_game ===
 .Yep. It's a game you're playing
+-> DONE
 
 === generic_take ===
 You try to take. Huh, weird. Nothing happens
+-> DONE
 
 
 
@@ -40,10 +52,12 @@ Click words to <verb>start</start>
         
 === tutorial_start_b ===
 .Hey, this is the tutorial. You can't start the game from here! <verb>take</verb> a breather, and head on <noun>back</noun> .
+-> DONE
 
 === cheat ===
 .Ayyy, what is this? How did you get here??
-        
+-> DONE
+
 === office_a === 
 <location>office</office>
 <rule>clearHistory</rule>
@@ -64,10 +78,17 @@ Another late night, another blank document. The filtered light of your monitor d
 
 
 === office_a_write_poem ===
-.Your fingers poise themselves over the keys in anticipation of a stroke of inspiration that does not come. Try as you might, there are other things blocking your creativity… How could anyone be expected to create art when...
+Your fingers poise themselves over the keys in anticipation of a stroke of inspiration that does not come. Try as you might, there are other things blocking your creativity… How could anyone be expected to create art when...
+    { not winCon_bulbBuzzing: N the damn <noun>bulb</noun> is buzzing. }
+    { not winCon_cupOfCoffee: N you haven't had a cup of <noun>coffee</noun> in at least two hours. }
+    { not winCon_atticFan: N you're too damn hot and the <noun>fan</noun> is still in the attic. }
+    { knowledgeOfDemon: N And the <noun>demon</noun> is still up in the attic. }
+    
+-> DONE
 
 === office_a_force_poem ===
 .It's all about white knuckling your way through life. It's just words, you keep saying, yet they won't come out.
+-> DONE
 
 === office_a_look_vicinity ===
 .You’re in your office. It’s night out, and the <noun>curtains</noun> are drawn; the barest HINT of moonlight seeps through. The bare <noun>bulb</noun> that dangles from a crimped wire buzzes annoyingly overhead. Your <noun>desk</noun> is cluttered, as usual. There’s only one <noun>door</noun> to <noun>exit</noun> out of here, leading to the upstairs hallway.
@@ -147,9 +168,11 @@ Another late night, another blank document. The filtered light of your monitor d
 
 === office_a_look_window ===
 .It’s nighttime, but the pale glow of a crescent moon illuminates the wall your office faces in an insipid <verb>cast</verb> . You try to get inspired by the pattern of blank grey stucco. You <verb>enter a trance of swirling meters and metaphors for ennui. You can’t think of anything that rhymes with stucco.
+-> DONE
 
 === office_a_look_at_door ===
 .It's a door, wooden. Metal <verb>handle</verb> .
+-> DONE
 
 === office_a_open_door ===
 .The upstairs <noun>hallway</noun> waits beyond

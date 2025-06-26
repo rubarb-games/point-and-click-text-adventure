@@ -134,6 +134,9 @@ func setSpecialColor():
 	defaultColor = specialColor
 	buttonHandle.self_modulate = specialColor
 
+func setInvisible():
+	buttonHandle.self_modulate.a = 0
+
 func Die():
 	#print("I'm dying now!")
 	var s = SimonTween.new()

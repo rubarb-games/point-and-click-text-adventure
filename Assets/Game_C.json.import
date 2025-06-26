@@ -1,0 +1,15 @@
+[remap]
+
+importer="inkgd.ink.json"
+type="Resource"
+uid="uid://iw2fkte3po1w"
+path="res://.godot/imported/Game_C.json-8a343ffdfda770f99ca54a5fbb6bc68c.res"
+
+[deps]
+
+source_file="res://Assets/Game_C.json"
+dest_files=["res://.godot/imported/Game_C.json-8a343ffdfda770f99ca54a5fbb6bc68c.res"]
+
+[params]
+
+compress=true
