@@ -87,6 +87,12 @@ func checkIfWordIsUseful():
 				#print("FOUND MATCH IN WORD! "+str(i.word)+" AND "+str(s))
 				i.setHighlightedColor()
 				skip = true
+		
+		if (storyManagerHandle.hasVisitedBefore(i.word)):
+			pass
+			print("WORD: "+str(i.word)+" HAS BEEN USED BEFORE!")
+		else:
+			pass #not used before
 
 func OnInteractiveButtonClicked(word, buttonHandle):
 	addToInventory(buttonHandle,false)

@@ -23,6 +23,7 @@ var locationChoices:Array
 var savedState:String
 var lastChoiceMade:String = "Cool"
 var cachedState
+var cachedCurrentPath:String = ""
 
 var allGlobalVariables:Dictionary
 var allVisitCounts:Dictionary
@@ -30,6 +31,8 @@ var allVisitCounts:Dictionary
 var firstLine:bool = false
 
 var previousStates:Array[Dictionary]
+
+var visistedChoices:Dictionary
 
 func _ready():
 	_ink_player.connect("loaded",_story_loaded)
@@ -72,8 +75,10 @@ func _continued(text, tags):
 	if (firstLine):
 		firstLine = false
 	else:
-		print("CONTINUING STORY ONTO: "+str(text))
 		currentStoryText = text
+		print("CONTINUING STORY ONTO: "+str(text))
+	if (_ink_player.current_path != ""):
+		cachedCurrentPath = _ink_player.current_path.split(".")[0]
 	#Global.StoryProgressed.emit()
 	Global.StoryProgressed.emit()
 	#print("CURRENT CHOIES: "+str(currentChoices))
@@ -285,6 +290,26 @@ func OnRuleEncountered(rule:String):
 			previousStates = []
 			#lastChoiceMade = ""
 
+func addVisitedChoice(c):
+	var tmpArr: Array = []
+	var p = cachedCurrentPath#_ink_player.current_path.split(".")[0]
+	print("ADDING TO VISITED:")
+	print(str(p)+" - "+str(c))
+	
+	if (visistedChoices.has(p)):
+		tmpArr = visistedChoices[p].duplicate()
+	tmpArr.append(c)
+	visistedChoices[p] = tmpArr
+	
+func hasVisitedBefore(c):
+	var p = cachedCurrentPath#_ink_player.current_path.split(".")[0]
+	print("Seaching path... current is: "+str(p))
+	if (visistedChoices.has(p)):
+		for a in visistedChoices[p]:
+			if (a.contains(c)):
+				return true
+	return false
+	
 func OnCommandMade(com:String):
 	lastCommand = currentCommand
 	currentCommand = com

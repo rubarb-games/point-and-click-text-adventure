@@ -59,6 +59,7 @@ func executeCommand():
 	var i = storyManagerHandle.currentChoices.find(tempWord.strip_edges())
 	if (i != -1):
 		commandFound = true
+		storyManagerHandle.addVisitedChoice(tempWord)
 		for b in commandWord:
 			b = b as WordButton
 			b.moveButtonToLocation(textAreaHandle, false, false)
@@ -80,7 +81,7 @@ func executeCommand():
 	else:
 		for s in storyManagerHandle.locationChoices:
 			if tempWord in s["text"] and !commandFound:
-				print("HELL YEAH LOCATION THING!!!")
+				storyManagerHandle.addVisitedChoice(tempWord)
 				commandFound = true
 				storyManagerHandle.pathToJumpTo = s["path"]
 				storyManagerHandle.pathJumpCached = true
@@ -90,6 +91,7 @@ func executeCommand():
 				break
 		for p in storyManagerHandle.genericChoices:
 			if tempWord in p["text"] and !commandFound:
+				storyManagerHandle.addVisitedChoice(tempWord)
 				commandFound = true
 				storyManagerHandle.pathToJumpTo = p["path"]
 				storyManagerHandle.pathJumpCached = true
