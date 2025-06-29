@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://deucpxt1oo03y"]
+[gd_scene load_steps=12 format=3 uid="uid://deucpxt1oo03y"]
 
 [ext_resource type="Script" uid="uid://cnbrwvqeupx3l" path="res://word_button.gd" id="1_6lrsh"]
 [ext_resource type="Theme" uid="uid://bgrtoh4ltf7ow" path="res://MainGameText.tres" id="1_8si5s"]
 [ext_resource type="Curve" uid="uid://bu12tcgbprurd" path="res://Assets/curveA.tres" id="2_iqcyv"]
+[ext_resource type="Texture2D" uid="uid://ct715qwdwdfwm" path="res://Assets/ButtonBG.png" id="4_30y0u"]
+[ext_resource type="Texture2D" uid="uid://c4ude0ucij1q3" path="res://Assets/questionMark.png" id="5_oy8bl"]
 
 [sub_resource type="Curve" id="Curve_8si5s"]
 _limits = [-1.0, 1.0, 0.0, 1.0]
@@ -19,7 +21,21 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.116972, 1), 0.0, 0.0, 0, 0, Vector2(0.254587, -0.972101), 0.0, 0.0, 0, 0, Vector2(0.461009, 0.614647), 0.0, 0.0, 0, 0, Vector2(0.612385, -0.530079), 0.0, 0.0, 0, 0, Vector2(0.704128, 0.297297), 0.0, 0.0, 0, 0, Vector2(0.834862, -0.212729), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 8
 
-[node name="Button" type="RichTextLabel" node_paths=PackedStringArray("buttonHandle")]
+[sub_resource type="Curve" id="Curve_acj5x"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.208633, 0.691046), 0.0, 0.0, 0, 0, Vector2(0.517986, -0.788452), 0.0, 0.0, 0, 0, Vector2(0.77554, 0.843347), 0.0, 0.0, 0, 0, Vector2(0.876259, -0.314142), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 6
+
+[sub_resource type="Curve" id="Curve_th5by"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Gradient" id="Gradient_acj5x"]
+offsets = PackedFloat32Array(0, 0.453834, 0.762128, 1)
+colors = PackedColorArray(0.6, 0.243137, 0.45098, 0, 0.672201, 0.284825, 0.50965, 1, 0.725502, 0.320608, 0.556319, 1, 0.6, 0.243137, 0.45098, 0)
+
+[node name="Button" type="RichTextLabel" node_paths=PackedStringArray("buttonHandle", "particlesHandle", "backingSprite")]
+z_index = -1
 clip_contents = false
 custom_minimum_size = Vector2(0, 40)
 offset_bottom = 42.0
@@ -39,12 +55,14 @@ deselect_on_focus_loss_enabled = false
 script = ExtResource("1_6lrsh")
 buttonHandle = NodePath("ActualWord")
 fadeCurve = ExtResource("2_iqcyv")
+particlesHandle = NodePath("questionParticles")
+backingSprite = NodePath("Backing")
 driftingCurve = SubResource("Curve_8si5s")
 shakeCurve = SubResource("Curve_30y0u")
 rotShakeCurve = SubResource("Curve_oy8bl")
+backingSpriteDriftingCurve = SubResource("Curve_acj5x")
 
 [node name="WordButton" type="Button" parent="."]
-z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,7 +74,7 @@ size_flags_vertical = 4
 theme = ExtResource("1_8si5s")
 
 [node name="ActualWord" type="RichTextLabel" parent="."]
-z_index = -1
+z_index = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -75,5 +93,26 @@ scroll_active = false
 shortcut_keys_enabled = false
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="questionParticles" type="CPUParticles2D" parent="."]
+position = Vector2(0, 14)
+amount = 2
+texture = ExtResource("5_oy8bl")
+lifetime = 2.5
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(15, 15)
+direction = Vector2(0, -1)
+gravity = Vector2(0, -10)
+scale_amount_min = 0.1
+scale_amount_max = 0.2
+scale_amount_curve = SubResource("Curve_th5by")
+color_ramp = SubResource("Gradient_acj5x")
+
+[node name="Backing" type="Sprite2D" parent="."]
+self_modulate = Color(1, 1, 1, 0.513726)
+z_index = -1
+scale = Vector2(0.602742, 0.472633)
+texture = ExtResource("4_30y0u")
 
 [connection signal="pressed" from="WordButton" to="." method="OnClicked"]

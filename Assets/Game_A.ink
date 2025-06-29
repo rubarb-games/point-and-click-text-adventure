@@ -36,9 +36,9 @@ You try to take. Huh, weird. Nothing happens
 <rule>clearHistory</rule>
 Click words to <verb>start</start>
 
-    * start
+    * start 
     -> tutorial_start_2
-    * start__game
+    * start__game 
     -> office_a
 
     
@@ -167,7 +167,7 @@ Your fingers poise themselves over the keys in anticipation of a stroke of inspi
     -> office_a_look_curtains
 
 === office_a_look_window ===
-.It’s nighttime, but the pale glow of a crescent moon illuminates the wall your office faces in an insipid <verb>cast</verb> . You try to get inspired by the pattern of blank grey stucco. You <verb>enter a trance of swirling meters and metaphors for ennui. You can’t think of anything that rhymes with stucco.
+.It’s nighttime, but the pale glow of a crescent moon illuminates the wall your office faces in an insipid <verb>cast</verb> . You try to get inspired by the pattern of blank grey stucco. You <verb>enter</verb> a trance of swirling meters and metaphors for ennui. You can’t think of anything that rhymes with stucco.
 -> DONE
 
 === office_a_look_at_door ===

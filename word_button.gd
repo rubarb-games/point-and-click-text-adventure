@@ -1,13 +1,15 @@
 class_name WordButton
 extends Control
 
-enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, DISABLED }
+enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, GLITCHED, DISABLED }
 var bS:buttonStatus
 
 @export var buttonHandle:RichTextLabel
 @export var interactableColor:Color = Color.DARK_KHAKI
 @export var fadeCurve:Curve
 @export var actualTextHandle:RichTextLabel
+@export var particlesHandle:CPUParticles2D
+@export var backingSprite:Sprite2D
 
 var wData:WordData
 
@@ -15,6 +17,11 @@ var word:String = ""
 var discoverable:bool = false
 var inventoryItem:bool = false
 var commandItem:bool = false
+
+var glitchedText:bool = false
+var glitchedWord:String = ""
+var glitchedCharacters := ["#","@","&","$","%","!","*","-","+","?","X"]
+var glitchedEffects := ["[shake rate=40 level=25 connected=0]","[shake rate=40 level=-85 connected=0]","[color=red]"]
 
 var active:bool = true
 var defaultColor:Color
@@ -32,6 +39,7 @@ var driftOn:bool =false
 var shakeTween:SimonTween
 
 @export var rotShakeCurve:Curve
+@export var backingSpriteDriftingCurve:Curve
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -39,10 +47,19 @@ func _ready():
 	defaultColor = highlightedColor
 	previousColor = defaultColor
 	self_modulate.a = 0.0
+	particlesHandle.emitting = false
+	backingSprite.visible = false
+	var s:SimonTween = SimonTween.new()
+	s.createTween(backingSprite,"position:x",5,5,backingSpriteDriftingCurve).setLoops(-1).anotherParallel(). \
+	createTween(backingSprite, "position:y",5,6,backingSpriteDriftingCurve).setLoops(-1)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	if (glitchedText):
+		var tmpWord = ""
+		for a in word.length():
+			tmpWord += glitchedEffects[randi() % glitchedEffects.size()] + glitchedCharacters[randi() % glitchedCharacters.size()]
+		updateWordText(tmpWord,true)
 
 func updateWord(isDiscoverable:bool = false):
 	buttonHandle.text = word
@@ -78,12 +95,16 @@ func errorShake():
 	buttonHandle.modulate = defaultColor
 	return true
 
-func updateWordText(w:String):
-	word = w
+func updateWordText(w:String, skipUpdatingWord:bool = false):
+	if (!skipUpdatingWord):
+		word = w
 	self.text = "[center]"+w
 	buttonHandle.text  = "[center]"+w
-
+	#print("PARTICLE POSITION? "+str(particlesHandle.position))
 	buttonHandle.pivot_offset = Vector2(self.size.x, self.size.y / 2)
+	backingSprite.position = Vector2(self.size.x*2,self.size.y/2)
+	await get_tree().process_frame
+	particlesHandle.position = Vector2(self.size.x/2,self.size.y/4)#self.size / 2
 
 func updateData(button:WordButton):
 	word = button.word
@@ -115,6 +136,7 @@ func SetInteractible():
 func SetInventory():
 	bS = buttonStatus.INVENTORY
 	buttonHandle.self_modulate = defaultColor
+	backingSprite.visible = true
 
 func SetCommands():
 	bS = buttonStatus.COMMAND
@@ -137,16 +159,27 @@ func setSpecialColor():
 func setInvisible():
 	buttonHandle.self_modulate.a = 0
 
+func setUndiscoveredOptions():
+	particlesHandle.emitting = true
+	
+func setDiscoveredOptions():
+	particlesHandle.emitting = false
+	
+func setGlitched():
+	glitchedText = true
+	bS = buttonStatus.GLITCHED
+
 func Die():
 	#print("I'm dying now!")
 	var s = SimonTween.new()
-	await s.createTween(self,"modulate:a",-1,0.1).tweenDone
+	await s.createTween(self,"modulate:a",-1,Global.veryShortPause*randf_range(0.5,1.5)).tweenDone
 	self.queue_free()
 
 func OnClicked():
 	if (Global.gamePaused or !active):
 		return
-	print("Clicked on word: "+str(word)+" !!!")
+	Global.ButtonClicked.emit()
+	#print("Clicked on word: "+str(word)+" !!!")
 	match bS:
 		buttonStatus.TEXTLOG_INTERACTIBLE:
 			if (active):
@@ -159,6 +192,8 @@ func OnClicked():
 		buttonStatus.COMMAND:
 			print("And its an command item")
 			Global.CommandInteractibleClicked.emit(word,self, true)
+		buttonStatus.GLITCHED:
+			Global.GlitchedClicked.emit(word,self)
 	#self.queue_free()
 
 func moveButtonToLocation(goalObjectHandle:Node, deleteAtEnd:bool = true, fadeGoal:bool = true):

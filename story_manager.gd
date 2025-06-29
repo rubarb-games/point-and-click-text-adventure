@@ -1,4 +1,4 @@
-class_name StoryManager
+class_name StoryManagerOLD
 extends Node
 @export var _ink_player:InkPlayer
 @export var commandManagerHandle:Control
@@ -35,6 +35,8 @@ var previousStates:Array[Dictionary]
 var visistedChoices:Dictionary
 
 func _ready():
+	return
+	
 	_ink_player.connect("loaded",_story_loaded)
 	_ink_player.connect("continued",_continued)
 	_ink_player.connect("prompt_choices",_prompt_choices)
@@ -79,6 +81,7 @@ func _continued(text, tags):
 		print("CONTINUING STORY ONTO: "+str(text))
 	if (_ink_player.current_path != ""):
 		cachedCurrentPath = _ink_player.current_path.split(".")[0]
+		print("CachedPath is: "+str(cachedCurrentPath))
 	#Global.StoryProgressed.emit()
 	Global.StoryProgressed.emit()
 	#print("CURRENT CHOIES: "+str(currentChoices))
@@ -95,7 +98,8 @@ func SaveAllVariables():
 	
 func LoadAllVariables():
 	for name in allGlobalVariables.keys():
-		_ink_player.set_variable(name,allGlobalVariables[name])
+		if (is_instance_valid([name])):
+			_ink_player.set_variable(name,allGlobalVariables[name])
 	_ink_player._story.state._visit_counts = allVisitCounts.duplicate(true)
 
 func resetState(wVars:bool = false):
@@ -139,6 +143,7 @@ func OnChoiceMade(choice):
 	#currentStoryText = ""
 
 func OnMakeChoice(index):
+	#resetState()
 	currentChoiceIndex = index
 	#addStateToHistory()
 
@@ -232,7 +237,7 @@ func OnGoBack():
 		#currentStoryText = ""
 		goBackCached = false
 		prepNewLine()
-		_ink_player.reset()
+		resetState()
 		_ink_player.choose_path(tmpState["state"])
 		_ink_player.continue_story()
 
@@ -263,7 +268,7 @@ func OnLocationEncountered(loc:String):
 	if (loc == locationName):
 		return
 		
-	locationAvailable = true
+	#locationAvailable = true
 	locationName = loc
 	locationChoices = []
 	for c in _ink_player.get_current_choices().duplicate():
@@ -289,6 +294,8 @@ func OnRuleEncountered(rule:String):
 			print("ENCOUNTERED RULE: HISTORY CLEAR")
 			previousStates = []
 			#lastChoiceMade = ""
+		"NoLocationCommands":
+			locationAvailable = false
 
 func addVisitedChoice(c):
 	var tmpArr: Array = []

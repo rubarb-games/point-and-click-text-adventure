@@ -73,26 +73,31 @@ func checkIfWordIsUseful():
 	await get_tree().process_frame
 	#print("CHECKINg THIS STUFF OUTTTT")
 	var skip:bool = false
+	var undiscoveredAction:bool = false
 	for i in inventoryAreaHandle.get_children():
 		skip = false
+		undiscoveredAction = false
 		i.setMutedColor()
 		if (i.word == "back" and !skip):
 			i.setSpecialColor()
 			skip = true
 			
-		#print("CHECKING FOR MATCHES FOR... "+str(i.word))
-		for s in storyManagerHandle.currentChoices:
-			#print("CHECKING "+str(i.word)+" AGAINST: "+str(s))
-			if (s.contains(i.word.strip_edges()) and !skip):
-				#print("FOUND MATCH IN WORD! "+str(i.word)+" AND "+str(s))
-				i.setHighlightedColor()
-				skip = true
+		var choices = storyManagerHandle.get_all_choices(true)
+		for s in choices.keys():
+			if (s.contains(i.word.strip_edges())):
+				if (!skip):
+					i.setHighlightedColor()
+					skip = true
 		
-		if (storyManagerHandle.hasVisitedBefore(i.word)):
-			pass
-			print("WORD: "+str(i.word)+" HAS BEEN USED BEFORE!")
+				if (!storyManagerHandle.has_visited(choices[s])):
+					print("HAS NOT VISITED: "+str(s))
+					undiscoveredAction = true
+					
+		if (undiscoveredAction):
+			i.setUndiscoveredOptions()
 		else:
-			pass #not used before
+			i.setDiscoveredOptions()
+			
 
 func OnInteractiveButtonClicked(word, buttonHandle):
 	addToInventory(buttonHandle,false)
@@ -102,4 +107,3 @@ func OnCommandButtonClicked(word, buttonHandle, deleteEntry):
 		if i.word == buttonHandle.word:
 			buttonHandle.moveButtonToLocation(i,true)
 			i.enable()
-	#addToInventory(buttonHandle, true)

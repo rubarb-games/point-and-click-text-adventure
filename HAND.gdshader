@@ -6,6 +6,8 @@
 
 shader_type canvas_item;
 
+
+uniform sampler2D SCREEN_TEXTURE: hint_screen_texture, filter_linear_mipmap;
 // 振動の強さ
 uniform float shake_power = 0.03;
 // 振動率

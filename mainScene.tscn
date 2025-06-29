@@ -1,40 +1,61 @@
-[gd_scene load_steps=19 format=3 uid="uid://bfflx0l6wr1es"]
+[gd_scene load_steps=32 format=3 uid="uid://bfflx0l6wr1es"]
 
-[ext_resource type="Script" uid="uid://4c8c8m2yqdsp" path="res://story_manager.gd" id="1_fo1y6"]
+[ext_resource type="Script" uid="uid://buvkb33h5fivb" path="res://fade_from_black.gd" id="1_466gm"]
 [ext_resource type="Script" uid="uid://dfvrhy22uc4fy" path="res://textManager.gd" id="1_vfj14"]
 [ext_resource type="PackedScene" uid="uid://deucpxt1oo03y" path="res://word_button.tscn" id="2_7wh3j"]
 [ext_resource type="Script" uid="uid://liaj2kxrcyd3" path="res://inventory_manager.gd" id="2_31r86"]
-[ext_resource type="Script" uid="uid://dd0psudnhbp0r" path="res://addons/inkgd/ink_player.gd" id="2_epggo"]
-[ext_resource type="Shader" uid="uid://c5o2c1v0djkwo" path="res://HAND.gdshader" id="3_ykwv5"]
-[ext_resource type="Shader" uid="uid://ichfut7b6lxc" path="res://VHS.gdshader" id="4_14l1l"]
+[ext_resource type="Shader" path="res://VHS.gdshader" id="4_14l1l"]
 [ext_resource type="Script" uid="uid://bscmihbylodm7" path="res://command_manager.gd" id="4_e1hhh"]
 [ext_resource type="Texture2D" uid="uid://bciahps44uc2k" path="res://Assets/thehandofbell.png" id="4_ykwv5"]
-[ext_resource type="PackedScene" uid="uid://1b12jmhpum8t" path="res://word_popup.tscn" id="5_u7har"]
+[ext_resource type="Script" uid="uid://bt442yvrgc82s" path="res://the_hand_of_bell.gd" id="5_nlk40"]
+[ext_resource type="Material" uid="uid://db50lk46k2a2g" path="res://Assets/GlitchMaterial.tres" id="5_s7pqw"]
+[ext_resource type="PackedScene" path="res://word_popup.tscn" id="5_u7har"]
 [ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
-[ext_resource type="Resource" uid="uid://utq2hsph8aje" path="res://Assets/Game_B.json" id="8_uqts1"]
+[ext_resource type="Script" uid="uid://cr1kq66s0cxvc" path="res://sprite_iris.gd" id="6_ykwv5"]
+[ext_resource type="PackedScene" uid="uid://bcj31424m7kul" path="res://sprite_iris.tscn" id="7_nlk40"]
 [ext_resource type="Shader" uid="uid://c1vdikc7ejqht" path="res://lavacloud.gdshader" id="8_vuu3o"]
 [ext_resource type="Texture2D" uid="uid://bollg8tkj4l2k" path="res://Assets/Shader/bubbles.png" id="9_0pyiw"]
+[ext_resource type="Script" uid="uid://4qp5yowq7h5g" path="res://story_manager_csv.gd" id="11_nlk40"]
 [ext_resource type="Theme" uid="uid://bgrtoh4ltf7ow" path="res://MainGameText.tres" id="13_uqts1"]
+[ext_resource type="Texture2D" uid="uid://dawbt4ai6nr2s" path="res://Assets/Vignette.png" id="18_s7pqw"]
+[ext_resource type="Script" uid="uid://cymagsst1ym5l" path="res://audio_manager.gd" id="18_smdy7"]
+[ext_resource type="AudioStream" uid="uid://bnpmti6rvx5r4" path="res://Assets/gong2_sfx.wav" id="19_smdy7"]
+[ext_resource type="AudioStream" uid="uid://3h5u6cve03cv" path="res://Assets/tone_02.wav" id="20_6qrj0"]
+[ext_resource type="AudioStream" uid="uid://drh88l6cv5ha3" path="res://Assets/hitHurt.wav" id="21_251pa"]
+[ext_resource type="AudioStream" uid="uid://c6kw1tqdhyhsv" path="res://Assets/toneDeep.wav" id="21_tlk23"]
+[ext_resource type="AudioStream" uid="uid://d1ilek1swgo73" path="res://Assets/pickupCoin.wav" id="22_kpsh6"]
+[ext_resource type="AudioStream" uid="uid://cgft8bvtkjsbu" path="res://Assets/ErrorTone.wav" id="23_3qdnn"]
+[ext_resource type="AudioStream" uid="uid://cibypxbjtsd0n" path="res://Assets/darkAtmosphere.wav" id="24_3qdnn"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_14l1l"]
 shader = ExtResource("8_vuu3o")
-shader_parameter/bottom_color = Color(0.41, 0.090200014, 0.30873004, 1)
-shader_parameter/top_color = Color(0.14439999, 0.07599999, 0.19, 1)
+shader_parameter/bottom_color = Color(0.41, 0.0902, 0.30873, 1)
+shader_parameter/top_color = Color(0.1444, 0.076, 0.19, 1)
 shader_parameter/tex2 = ExtResource("9_0pyiw")
 shader_parameter/tex = ExtResource("9_0pyiw")
 shader_parameter/layer_count = 3
-shader_parameter/time_scale = 0.01200000057
-shader_parameter/base_intensity = 0.098000004655
+shader_parameter/time_scale = 0.012
+shader_parameter/base_intensity = 0.098
 shader_parameter/size = 1.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nlk40"]
-shader = ExtResource("3_ykwv5")
+[sub_resource type="Curve" id="Curve_nlk40"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.107914, -0.161841), 0.0, 0.0, 0, 0, Vector2(0.253237, 0.832469), 0.0, 0.0, 0, 0, Vector2(0.420144, -0.601339), 0.0, 0.0, 0, 0, Vector2(0.723741, 0.203682), 0.0, 0.0, 0, 0, Vector2(0.86187, -0.392469), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 7
+
+[sub_resource type="Curve" id="Curve_466gm"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.057554, 0.997882), 0.0, 0.0, 0, 0, Vector2(0.161151, 0.980935), -0.5478, -0.5478, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Curve" id="Curve_auxaw"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.0776979, 0.841128), 0.907281, 0.907281, 0, 0, Vector2(0.421583, 0.98729), 0.145748, 0.145748, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_u7har"]
 shader = ExtResource("4_14l1l")
-shader_parameter/wiggle = 0.03999999910592
+shader_parameter/wiggle = 0.04
 shader_parameter/wiggle_speed = 64.0
-shader_parameter/smear = 0.5850000277875
+shader_parameter/smear = 0.585
 shader_parameter/blur_samples = 7
 
 [node name="Scene" type="Control"]
@@ -65,23 +86,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 1452.0
 offset_top = 952.0
-offset_right = 1786.1797
-offset_bottom = 1846.1797
+offset_right = 1786.18
+offset_bottom = 1846.18
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 3.1415927
+rotation = 3.14159
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="The Hand of Bell" type="Sprite2D" parent="."]
-z_index = -1
-material = SubResource("ShaderMaterial_nlk40")
-position = Vector2(221.99997, 622.99994)
-scale = Vector2(0.39566764, 0.3956677)
-texture = ExtResource("4_ykwv5")
-
-[node name="ColorRect VHS" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_u7har")
+[node name="Bellhands" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0.466667)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,6 +103,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="The Hand of Bell" type="Sprite2D" parent="Bellhands"]
+z_index = -1
+position = Vector2(95, 648)
+rotation = -0.171072
+scale = Vector2(0.346772, 0.346772)
+texture = ExtResource("4_ykwv5")
+script = ExtResource("5_nlk40")
+positionMoveCurve = SubResource("Curve_nlk40")
+
+[node name="The Hand of Bell2" type="Sprite2D" parent="Bellhands"]
+z_index = -1
+position = Vector2(1083, 637)
+rotation = -2.8859
+scale = Vector2(0.335043, -0.335043)
+texture = ExtResource("4_ykwv5")
+script = ExtResource("5_nlk40")
+positionMoveCurve = SubResource("Curve_nlk40")
+isCommandHand = true
+randNo = 0.63
+
+[node name="ColorRect" type="ColorRect" parent="Bellhands"]
+visible = false
+z_index = 4
+material = ExtResource("5_s7pqw")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="spriteSpawner" type="Control" parent="."]
+modulate = Color(1, 1, 1, 0.0941176)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+script = ExtResource("6_ykwv5")
+opacityCurve = SubResource("Curve_466gm")
+scaleCurve = SubResource("Curve_auxaw")
+spriteScene = ExtResource("7_nlk40")
 
 [node name="WordPopup" parent="." instance=ExtResource("5_u7har")]
 layout_mode = 0
@@ -98,6 +156,7 @@ offset_right = 107.67
 offset_bottom = 106.055
 
 [node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugHandle", "debugHandle2", "debugHandle3")]
+visible = false
 anchors_preset = 0
 offset_left = 67.6699
 offset_top = 66.055
@@ -149,24 +208,16 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="StoryManager" type="Control" parent="." node_paths=PackedStringArray("_ink_player", "commandManagerHandle")]
+[node name="StoryManager2" type="Control" parent="." node_paths=PackedStringArray("centerTextMarkerHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
-script = ExtResource("1_fo1y6")
-_ink_player = NodePath("InkPlayer")
-commandManagerHandle = NodePath("../CommandManager")
+script = ExtResource("11_nlk40")
+csvPath = "res://Assets/Lacuna_script_a.csv"
+centerTextMarkerHandle = NodePath("../CenterTextMarker")
 
-[node name="InkPlayer" type="Control" parent="StoryManager"]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("2_epggo")
-ink_file = ExtResource("8_uqts1")
-loads_in_background = false
-
-[node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle", "textAreaGuide", "InventoryManagerHandle", "storyManagerHandle", "lastCommandText")]
+[node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle", "textAreaGuide", "InventoryManagerHandle", "storyManagerHandle", "lastCommandText", "centerTextMarkerHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -176,8 +227,9 @@ wordButtonToInstance = ExtResource("2_7wh3j")
 textAreaHandle = NodePath("../TextAreaControl/MarginContainer/TextArea")
 textAreaGuide = NodePath("../TextAreaGuide")
 InventoryManagerHandle = NodePath("../InventoryManager")
-storyManagerHandle = NodePath("../StoryManager")
-lastCommandText = NodePath("../TextAreaGuide/LastCommandText")
+storyManagerHandle = NodePath("../StoryManager2")
+lastCommandText = NodePath("../TextAreaGuide/Control/LastCommandText")
+centerTextMarkerHandle = NodePath("../CenterTextMarker")
 
 [node name="InventoryManager" type="Control" parent="." node_paths=PackedStringArray("inventoryAreaHandle", "InventoryLabelHandle", "storyManagerHandle")]
 anchors_preset = 0
@@ -188,9 +240,9 @@ script = ExtResource("2_31r86")
 inventoryAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Inventory_HBox")
 wordButtonToInstance = ExtResource("2_7wh3j")
 InventoryLabelHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/Control/Label")
-storyManagerHandle = NodePath("../StoryManager")
+storyManagerHandle = NodePath("../StoryManager2")
 
-[node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle", "storyManagerHandle", "textAreaHandle", "enterCommandHandle", "smallWordHandle")]
+[node name="CommandManager" type="Control" parent="." node_paths=PackedStringArray("commandAreaHandle", "storyManagerHandle", "textAreaHandle", "textMarkerHandle", "enterCommandHandle", "centerCommandMarkerHandle", "smallWordHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -198,9 +250,11 @@ mouse_filter = 2
 script = ExtResource("4_e1hhh")
 commandAreaHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox")
 wordButtonToInstance = ExtResource("2_7wh3j")
-storyManagerHandle = NodePath("../StoryManager")
+storyManagerHandle = NodePath("../StoryManager2")
 textAreaHandle = NodePath("../TextAreaControl/MarginContainer/TextArea")
+textMarkerHandle = NodePath("../CenterTextMarker")
 enterCommandHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox/Button")
+centerCommandMarkerHandle = NodePath("../CenterCommandMarker")
 smallWordHandle = NodePath("../InventoryControl/MarginContainer/BottomSpace_HBox/VBoxContainer/Commands_HBox/connectingWord")
 
 [node name="InventoryControl" type="Control" parent="."]
@@ -243,7 +297,7 @@ anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -441.5
 offset_top = -173.0
-offset_right = 219.23907
+offset_right = 219.239
 offset_bottom = -6.0
 grow_horizontal = 2
 theme = ExtResource("13_uqts1")
@@ -252,10 +306,10 @@ horizontal_alignment = 1
 
 [node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
 anchors_preset = 0
-offset_left = 102.0
-offset_top = -38.0
-offset_right = 461.0
-offset_bottom = 135.0
+offset_left = 6.0
+offset_top = -10.0
+offset_right = 365.0
+offset_bottom = 163.0
 size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
@@ -313,16 +367,45 @@ theme_override_constants/margin_bottom = 100
 [node name="TextArea" type="Node2D" parent="TextAreaControl/MarginContainer"]
 position = Vector2(640, 360)
 
-[node name="TextAreaGuide" type="Control" parent="."]
+[node name="CenterTextMarker" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 100.0
-offset_top = 100.0
-offset_right = 1140.0
-offset_bottom = 368.0
+offset_left = 625.0
+offset_top = 71.0
+offset_right = 665.0
+offset_bottom = 111.0
 mouse_filter = 2
 
-[node name="LastCommandText" type="RichTextLabel" parent="TextAreaGuide"]
-z_index = -1
+[node name="CenterCommandMarker" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1051.0
+offset_top = 548.0
+offset_right = 1091.0
+offset_bottom = 588.0
+mouse_filter = 2
+
+[node name="TextAreaGuide" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -273.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="TextAreaGuide"]
+z_index = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LastCommandText" type="RichTextLabel" parent="TextAreaGuide/Control"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -360,5 +443,97 @@ offset_bottom = 81.0
 text = "SAVE 
 STATE"
 
-[connection signal="pressed" from="GoToIndex" to="StoryManager" method="OnSetSate"]
-[connection signal="pressed" from="SaveIndex" to="StoryManager" method="OnGetState"]
+[node name="visuals" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FadeFromBlack" type="ColorRect" parent="visuals" node_paths=PackedStringArray("fadeToBlackBHandle")]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+script = ExtResource("1_466gm")
+fadeToBlackBHandle = NodePath("FadeFromBlack2")
+
+[node name="FadeFromBlack2" type="ColorRect" parent="visuals/FadeFromBlack"]
+self_modulate = Color(1, 1, 1, 0)
+z_index = 12
+z_as_relative = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect VHS" type="ColorRect" parent="visuals"]
+z_index = 4
+material = SubResource("ShaderMaterial_u7har")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Vignette" type="Sprite2D" parent="visuals"]
+self_modulate = Color(1, 1, 1, 0.372549)
+position = Vector2(636, 340)
+scale = Vector2(4.63595, 2.37831)
+texture = ExtResource("18_s7pqw")
+
+[node name="AudioManager" type="Control" parent="." node_paths=PackedStringArray("GongHandle", "ToneHandle", "ErrorHandle", "commandInputHandle", "ToneDeepHandle", "hitHurtHandle", "MusicAHandle")]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("18_smdy7")
+GongHandle = NodePath("GongStream")
+ToneHandle = NodePath("GeneralButtonStream")
+ErrorHandle = NodePath("ErrorStream")
+commandInputHandle = NodePath("CommandInputStream")
+ToneDeepHandle = NodePath("DeepToneStream")
+hitHurtHandle = NodePath("HitHurtStream")
+MusicAHandle = NodePath("MusicA")
+
+[node name="GongStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("19_smdy7")
+volume_db = -6.0
+
+[node name="HitHurtStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("21_251pa")
+volume_db = -6.0
+
+[node name="GeneralButtonStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("20_6qrj0")
+volume_db = -4.0
+
+[node name="DeepToneStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("21_tlk23")
+volume_db = -16.0
+
+[node name="CommandInputStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("22_kpsh6")
+volume_db = -24.0
+
+[node name="ErrorStream" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("23_3qdnn")
+volume_db = -5.0
+
+[node name="MusicA" type="AudioStreamPlayer2D" parent="AudioManager"]
+stream = ExtResource("24_3qdnn")
+volume_db = -6.0
+pitch_scale = 0.8
+autoplay = true

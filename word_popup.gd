@@ -26,7 +26,7 @@ func doPopup(tx, pos):
 	newText.position.x -= newText.size.x / 2
 	#updateWord(tx)
 	
-	var movementMagnitude = 40
+	var movementMagnitude = 8
 	newText.position.y -= movementMagnitude
 	newText.modulate.a = 0
 	

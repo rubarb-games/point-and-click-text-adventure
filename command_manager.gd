@@ -4,8 +4,10 @@ extends Control
 @export var wordButtonToInstance:PackedScene
 @export var storyManagerHandle:StoryManager
 @export var textAreaHandle:Node2D
+@export var textMarkerHandle:Control
 
 @export var enterCommandHandle:Button
+@export var centerCommandMarkerHandle:Control
 
 @export var smallWordHandle:WordButton
 
@@ -24,6 +26,7 @@ var margin = 60
 func _ready():
 	Global.InventoryInteractibleClicked.connect(OnInventoryInteraction)
 	Global.CommandInteractibleClicked.connect(OnCommandInteraction)
+	Global.CommandMade.connect(OnCommandMade)
 	enterCommandHandle.pressed.connect(OnCommandButtonPressed)
 	toggleCommandButton(false)
 	smallWordHandle.updateWordText("")
@@ -51,57 +54,49 @@ func executeCommand():
 	if (nounRepresented):
 		tempWord += "_" + smallWordHandle.word.to_lower() + "_" + currentNoun.word.to_lower()
 		
-	#await get_tree().process_frame
-	for a in storyManagerHandle.currentChoices:
-		pass
-		#print(str(tempWord)+" - Checking against: "+str(a.strip_edges()))
-		
-	var i = storyManagerHandle.currentChoices.find(tempWord.strip_edges())
-	if (i != -1):
+	print("TEMPWORD IS: "+str(tempWord))
+	#var availableChoices = storyManagerHandle.get_all_choices(true)
+	var i = storyManagerHandle.currentChoices.has(tempWord)
+	if (i):
 		commandFound = true
-		storyManagerHandle.addVisitedChoice(tempWord)
+		Global.StoryPartialProgressed.emit(tempWord,"normal")
+		#storyManagerHandle.addVisitedChoice(tempWord)
 		for b in commandWord:
 			b = b as WordButton
-			b.moveButtonToLocation(textAreaHandle, false, false)
+			b.moveButtonToLocation(textMarkerHandle, false, false)
 		var s = SimonTween.new()
 		s.createTween(smallWordHandle,"modulate:a",-1,Global.veryShortPause)
-		await get_tree().create_timer(Global.shortPause).timeout	
-		Global.StoryChoiceMade.emit(i)
-		Global.CommandMade.emit(tempWord)
+		#Global.CommandMade.emit(tempWord)
+		#await get_tree().create_timer(Global.shortPause).timeout	
+		Global.StoryChoiceMade.emit(tempWord,"normal")
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	elif (tempWord == "__back" or tempWord == "take__back"):
-		if (storyManagerHandle.canGoBack()):
+		if (storyManagerHandle.can_go_back()):
 			commandFound = true
-			storyManagerHandle.goBackCached = true
-			Global.DumpText.emit(true)
+			#storyManagerHandle.goBackCached = true
+			#Global.CommandMade.emit("going back")
+			Global.StoryPartialProgressed.emit(tempWord,"back")
+			Global.StoryChoiceMade.emit(tempWord,"back")
 		else:
-			Global.TextPopup.emit("At the start of time...",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
-		#Global.GoBack.emit()
+			Global.ErrorPopup.emit()
+			Global.TextPopup.emit("At the start of time...",centerCommandMarkerHandle.global_position)#+ (commandAreaHandle.size / 2))
 	else:
-		for s in storyManagerHandle.locationChoices:
-			if tempWord in s["text"] and !commandFound:
-				storyManagerHandle.addVisitedChoice(tempWord)
-				commandFound = true
-				storyManagerHandle.pathToJumpTo = s["path"]
-				storyManagerHandle.pathJumpCached = true
-				#storyManagerHandle.jumpToPath(s["path"])
-				Global.DumpText.emit(true)
-				Global.CommandMade.emit(tempWord)
-				break
-		for p in storyManagerHandle.genericChoices:
-			if tempWord in p["text"] and !commandFound:
-				storyManagerHandle.addVisitedChoice(tempWord)
-				commandFound = true
-				storyManagerHandle.pathToJumpTo = p["path"]
-				storyManagerHandle.pathJumpCached = true
-				#storyManagerHandle.jumpToPath(p["path"])
-				Global.DumpText.emit(true)
-				Global.CommandMade.emit(tempWord)
-				break
-	
+		print("TESTING SECONDARY CHOICES")
+		if storyManagerHandle.locationChoices.has(tempWord) and storyManagerHandle.locationChoicesAvailable and !commandFound:
+			commandFound = true
+			Global.StoryPartialProgressed.emit(tempWord,"back")
+			Global.StoryChoiceMade.emit(tempWord,"location")
+			#Global.CommandMade.emit(tempWord)
+		if storyManagerHandle.genericChoices.has(tempWord) and storyManagerHandle.genericChoicesAvailable and !commandFound:
+			commandFound = true
+			Global.StoryPartialProgressed.emit(tempWord,"back")
+			Global.StoryChoiceMade.emit(tempWord,"generic")
+			#Global.CommandMade.emit(tempWord)
+			
 		if (!commandFound):
-			Global.TextPopup.emit("Unkown command..",commandAreaHandle.global_position + (commandAreaHandle.size / 2))
+			Global.ErrorPopup.emit()
+			Global.TextPopup.emit("Unkown command..",centerCommandMarkerHandle.global_position)# + (commandAreaHandle.size / 2))
 			for d in commandWord:
 				d.shake()
 			await get_tree().create_timer(0.4).timeout	
@@ -131,6 +126,7 @@ func OnInventoryInteraction(word, buttonHandle):
 	if (commandWord.size() == 3):
 		print("COMMANDS: Too many commands!!!!")
 		buttonHandle.errorShake()
+		Global.ErrorPopup.emit()
 		Global.TextPopup.emit("Too many words",buttonHandle.global_position + (buttonHandle.size / 2))
 		return
 
@@ -138,6 +134,7 @@ func OnInventoryInteraction(word, buttonHandle):
 		if (verbRepresented):
 			print("COMMANDS: Too many verbs!!!")
 			buttonHandle.errorShake()
+			Global.ErrorPopup.emit()
 			Global.TextPopup.emit("Too many verbs",buttonHandle.global_position  + (buttonHandle.size / 2))
 			return
 		else:
@@ -147,6 +144,7 @@ func OnInventoryInteraction(word, buttonHandle):
 		if (nounRepresented):
 			print("COMMANDS: Too many nouns!!!")
 			buttonHandle.errorShake()
+			Global.ErrorPopup.emit()
 			Global.TextPopup.emit("Too many nouns",buttonHandle.global_position + (buttonHandle.size / 2))
 			return
 		else:
@@ -238,6 +236,7 @@ func chooseSmallWord():
 			smallWordHandle.updateWordText("")
 
 func OnCommandButtonPressed():
+	Global.spriteIrisPopup.emit(centerCommandMarkerHandle.global_position)#commandAreaHandle.global_position+(commandAreaHandle.size/2))
 	executeCommand()
 
 func OnCommandInteraction(word, buttonHandle, eraseEntry):
@@ -262,3 +261,6 @@ func OnCommandInteraction(word, buttonHandle, eraseEntry):
 		toggleCommandButton(false)
 		print("COMMANDS: No commands left")
 	#buttonHandle.queue_free()
+
+func OnCommandMade(word):
+	pass
