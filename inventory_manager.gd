@@ -78,7 +78,7 @@ func checkIfWordIsUseful():
 		skip = false
 		undiscoveredAction = false
 		i.setMutedColor()
-		if (i.word == "back" and !skip):
+		if ((i.word == "back" or i.word == "hint") and !skip):
 			i.setSpecialColor()
 			skip = true
 			

@@ -22,6 +22,8 @@ var currentNoun:WordButton
 var horiSpacing = 15
 var margin = 60
 
+var specialKeywords:Array = ["__back","take__back","__hint","take__hint"]
+
 # C0alled when the node enters the scene tree for the first time.
 func _ready():
 	Global.InventoryInteractibleClicked.connect(OnInventoryInteraction)
@@ -66,21 +68,20 @@ func executeCommand():
 			b.moveButtonToLocation(textMarkerHandle, false, false)
 		var s = SimonTween.new()
 		s.createTween(smallWordHandle,"modulate:a",-1,Global.veryShortPause)
-		#Global.CommandMade.emit(tempWord)
-		#await get_tree().create_timer(Global.shortPause).timeout	
 		Global.StoryChoiceMade.emit(tempWord,"normal")
 		#for b in button
 		#buttonHandle.moveButtonToLocation(tWord)
 	elif (tempWord == "__back" or tempWord == "take__back"):
 		if (storyManagerHandle.can_go_back()):
 			commandFound = true
-			#storyManagerHandle.goBackCached = true
-			#Global.CommandMade.emit("going back")
 			Global.StoryPartialProgressed.emit(tempWord,"back")
 			Global.StoryChoiceMade.emit(tempWord,"back")
 		else:
 			Global.ErrorPopup.emit()
-			Global.TextPopup.emit("At the start of time...",centerCommandMarkerHandle.global_position)#+ (commandAreaHandle.size / 2))
+			Global.TextPopup.emit("At the start of time...",centerCommandMarkerHandle.global_position)#+ (commandAreaHandle.size / 2))'
+	elif (tempWord == "__hint" or tempWord == "take__hint"):
+		Global.StoryPartialProgressed.emit(tempWord,"hint")
+		Global.StoryChoiceMade.emit(tempWord,"hint")
 	else:
 		print("TESTING SECONDARY CHOICES")
 		if storyManagerHandle.locationChoices.has(tempWord) and storyManagerHandle.locationChoicesAvailable and !commandFound:
@@ -232,6 +233,10 @@ func chooseSmallWord():
 			smallWordHandle.updateWordText("at")
 		"walk":
 			smallWordHandle.updateWordText("to")
+		"talk":
+			smallWordHandle.updateWordText("to")
+		"listen":
+			smallWordHandle.updateWordText("to")
 		_:
 			smallWordHandle.updateWordText("")
 
@@ -262,5 +267,12 @@ func OnCommandInteraction(word, buttonHandle, eraseEntry):
 		print("COMMANDS: No commands left")
 	#buttonHandle.queue_free()
 
+func isSpecialKeyword(w:String):
+	var ind
+	for a in specialKeywords:
+		if (a.contains(w)):
+			return true
+	return false
+			
 func OnCommandMade(word):
 	pass

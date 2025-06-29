@@ -307,9 +307,9 @@ horizontal_alignment = 1
 [node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
 anchors_preset = 0
 offset_left = 6.0
-offset_top = -10.0
+offset_top = -70.0
 offset_right = 365.0
-offset_bottom = 163.0
+offset_bottom = 103.0
 size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]

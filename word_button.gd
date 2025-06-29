@@ -1,7 +1,7 @@
 class_name WordButton
 extends Control
 
-enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, GLITCHED, DISABLED }
+enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, GLITCHED, DEMON, PUNCTUATION, DISABLED }
 var bS:buttonStatus
 
 @export var buttonHandle:RichTextLabel
@@ -22,14 +22,17 @@ var glitchedText:bool = false
 var glitchedWord:String = ""
 var glitchedCharacters := ["#","@","&","$","%","!","*","-","+","?","X"]
 var glitchedEffects := ["[shake rate=40 level=25 connected=0]","[shake rate=40 level=-85 connected=0]","[color=red]"]
+var glitchedEffectsMild := ["[shake rate=40 level=5 connected=0]","[shake rate=40 level=-25 connected=0]","[color=red]"]
 
 var active:bool = true
 var defaultColor:Color
 var highlightedColor:Color = Color.WHITE
-var mutedColor:Color = Color.DIM_GRAY
-var specialColor:Color = Color.DARK_KHAKI
-var disabledColor:Color = Color(0.2,0.2,0.2,1)
+@export var mutedColor:Color = Color.DIM_GRAY
+@export var specialColor:Color = Color.DARK_KHAKI
+@export var disabledColor:Color = Color(0.2,0.2,0.2,1)
 var previousColor:Color
+
+var isPunctuation:bool = false
 
 @export var driftingCurve:Curve
 var driftingTween:SimonTween
@@ -55,11 +58,17 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if (glitchedText):
-		var tmpWord = ""
-		for a in word.length():
-			tmpWord += glitchedEffects[randi() % glitchedEffects.size()] + glitchedCharacters[randi() % glitchedCharacters.size()]
-		updateWordText(tmpWord,true)
+	match bS:
+		buttonStatus.GLITCHED:
+			var tmpWord = ""
+			for a in word.length():
+				tmpWord += glitchedEffects[randi() % glitchedEffects.size()] + glitchedCharacters[randi() % glitchedCharacters.size()]
+			updateWordText(tmpWord,true)
+		buttonStatus.DEMON:
+			var tmpWord = ""
+			for a in word.length():
+				tmpWord += glitchedEffectsMild[randi() % glitchedEffectsMild.size()] + word[a]#+ glitchedCharacters[randi() % glitchedCharacters.size()]
+			updateWordText(tmpWord,true)
 
 func updateWord(isDiscoverable:bool = false):
 	buttonHandle.text = word
@@ -98,6 +107,8 @@ func errorShake():
 func updateWordText(w:String, skipUpdatingWord:bool = false):
 	if (!skipUpdatingWord):
 		word = w
+	
+	word = word.replace("_"," ")
 	self.text = "[center]"+w
 	buttonHandle.text  = "[center]"+w
 	#print("PARTICLE POSITION? "+str(particlesHandle.position))
@@ -168,6 +179,14 @@ func setDiscoveredOptions():
 func setGlitched():
 	glitchedText = true
 	bS = buttonStatus.GLITCHED
+	
+func setDemon():
+	bS = buttonStatus.DEMON
+	defaultColor = Color.RED
+	
+func setPunctuation():
+	bS = buttonStatus.PUNCTUATION
+	isPunctuation = true
 
 func Die():
 	#print("I'm dying now!")

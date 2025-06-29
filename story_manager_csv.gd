@@ -24,10 +24,11 @@ var locationChoicesAvailable:bool = false
 var locationID:String = ""
 var locationChoices:Dictionary = {}
 
-var undoQueue:Array[String] = []
+var undoQueue:Array[Dictionary] = []
 var visited_ids:Dictionary = {}
 
 var specialChoices:Dictionary = {}
+var cachedLocationChoices:Dictionary = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -97,6 +98,33 @@ func parse_rules(rules_str:String) -> Dictionary:
 			rules[parts[0].strip_edges()] = result
 	return rules
 
+func fetch_viable_choices(choicesDict:Dictionary):
+	var resultChoices = {}
+	print("Processing choices at ID \""+str(currentID)+"\" now...")
+	for c in choicesDict.keys():
+		print(c+" - "+str(choicesDict[c]))
+		var viableChoice = true
+		var choiceData = get_node_data(choicesDict[c])
+		print(choiceData)
+		if (!choiceData):
+			continue
+		
+		for r in choiceData["Rules"].keys():
+			if (r=="requiredVar"):
+				var v = choiceData["Rules"][r]
+				var u = Global.getStoryVar(v["name"])
+				if (!u):
+					print("Choice removed. Variable \""+str(v["name"])+"\" has not been assigned")
+					viableChoice = false
+				elif (u != v["value"]):
+					print("Choice removed. Player does not possess variable \""+str(v["name"])+"\" at value: "+str(v["value"]))
+					viableChoice = false
+		if (viableChoice):
+			resultChoices[c] = choicesDict[c]
+		elif (choiceData["Rules"].has("fallbackID")):
+			print("Fallback: Adding fallback ID instead at \""+str(choiceData["Rules"]["fallbackID"])+"\"")
+			resultChoices[c] = choiceData["Rules"]["fallbackID"]["name"]
+	return resultChoices
 	
 func show_node(id:String):
 	var node_id = get_node_data(id)
@@ -108,7 +136,10 @@ func show_node(id:String):
 		print("CHOICES:")
 		for label in node_id["Choices"].keys():
 			print(" - ", label, "=>", node_id["Choices"][label])
-		currentChoices = node_id["Choices"].duplicate()
+		var tempChoices = node_id["Choices"].duplicate()
+		currentChoices = fetch_viable_choices(tempChoices)
+				
+		print("Choices are now processed")
 		currentRules = node_id["Rules"].duplicate()
 		
 		Global.StoryProgressed.emit()
@@ -144,10 +175,15 @@ func store_visited_id(addToUndoQueue:bool = true,overrideID:String = ""):
 	if (overrideID != ""):
 		tmpID = overrideID
 	
-	if (addToUndoQueue):
+	if (addToUndoQueue and !currentID.contains("hint")):
 		if (!visited_ids.has(tmpID)):
 			Global.TextPopup.emit("New text discovered",centerTextMarkerHandle.global_position)
-		undoQueue.append(currentID)
+		var tmpUndo = {
+			"ID": currentID,
+			"locChoices":locationChoices,
+			"locID":locationID
+		}
+		undoQueue.append(tmpUndo)
 		
 	visited_ids[tmpID] = true
 
@@ -165,9 +201,12 @@ func can_go_back():
 func go_back():	
 	if (can_go_back()):
 		cacheGoBack = false
-		var gotoID:String = undoQueue.pop_back()
+		var gotoID:Dictionary = undoQueue.pop_back()
 		Global.TextPopup.emit("You go back...",centerTextMarkerHandle.global_position)
-		show_node(gotoID)
+		#Update location to previous spot
+		locationChoices = gotoID["locChoices"]
+		locationID = gotoID["locID"]
+		show_node(gotoID["ID"])
 
 func OnGoBack():
 	cacheGoBack = true
@@ -181,6 +220,8 @@ func OnMakeChoice(id:String,type:String):
 			cachedChoice = locationChoices[id]
 		"generic":
 			cachedChoice = genericChoices[id]
+		"hint":
+			cachedChoice = "hint_a"
 		"back":
 			cacheGoBack = true
 	
@@ -244,6 +285,7 @@ func OnLocationEncountered(location:String):
 	var tmpLocData:Dictionary = get_node_data(currentID)
 	if tmpLocData:
 		locationID = location
-		locationChoices = tmpLocData["Choices"].duplicate()
+		var tmpChoices = tmpLocData["Choices"].duplicate()
+		locationChoices = fetch_viable_choices(tmpChoices)
 	else:
 		locationChoicesAvailable = false

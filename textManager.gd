@@ -53,7 +53,7 @@ func preProcessText(text):
 	
 	for match in rx.search_all(text):
 		if (match.get_string("var_name") != ""):
-			print("Matched a variable")
+			#print("Matched a variable")
 			var var_name = match.get_string("var_name")
 			var var_value = match.get_string("var_value")
 			var content = match.get_string("var_content").strip_edges()
@@ -65,7 +65,7 @@ func preProcessText(text):
 				"content": content
 			})
 		elif (match.get_string("tagged") != ""):
-			print("Matched a word"+str(match.get_string("words")))
+			#print("Matched a word"+str(match.get_string("words")))
 			var content = match.get_string("tagged")
 			word_blocks.append({
 				"type": "word",
@@ -73,7 +73,7 @@ func preProcessText(text):
 				"content": content
 			})
 		elif (match.get_string("punct") != ""):
-			print("Matched a word"+str(match.get_string("punct")))
+			#print("Matched a word"+str(match.get_string("punct")))
 			var content = match.get_string("punct")
 			word_blocks.append({
 				"type": "word",
@@ -81,7 +81,7 @@ func preProcessText(text):
 				"content": content
 			})
 		else:
-			print("Matched a word"+str(match.get_string("words")))
+			#print("Matched a word"+str(match.get_string("words")))
 			var content = match.get_string("words")
 			
 			word_blocks.append({
@@ -149,7 +149,7 @@ func parse_attributes(attr_str:String) -> Dictionary:
 func processTextRegex():
 	var rx = RegEx.new()
 	print(currentString)
-	rx.compile(r"<(?P<tag>\w+)(?P<attrs>[^>]*)>(?P<content>.*?)</\w+>|(?P<punct>[.,!?;:])|(?P<word>\w+(?:['’]\w+)?|\d+)")
+	rx.compile(r"<(?P<tag>\w+)(?P<attrs>[^>]*)>(?P<content>.*?)</\w+>|(?P<punct>[.,!?;:™])|(?P<word>\w+(?:['’]\w+)?|\d+)")
 	#rx.compile(r'(<[^>]+>)|([^<]+)')
 	var ry = RegEx.new()
 	ry.compile(r"\b\w+\b")
@@ -191,6 +191,7 @@ func processTextRegex():
 				var attrs = m["attributes"]
 				var content = m["content"]
 				entry = {
+					"type": "tag",
 					"word": content,
 					"tag": tag,
 					"attributes": attrs
@@ -198,6 +199,7 @@ func processTextRegex():
 			"word":
 				var content = m["content"]
 				entry = {
+					"type": "word",
 					"word": content,
 					"tag": ""
 				}
@@ -205,6 +207,7 @@ func processTextRegex():
 				var content = m["content"]
 				print("Hell yeah punctuation.. "+str(content))
 				entry = {
+					"type": "punct",
 					"word": m["content"],
 					"tag": ""
 				}
@@ -255,6 +258,15 @@ func processTextRegex():
 			match b["tag"]:
 				"redacted":
 					butt.setGlitched()
+					pass
+				"redactedB":
+					butt.setDemon()
+					pass
+				_:
+					pass
+			match b["type"]:
+				"punct":
+					butt.setPunctuation()
 					pass
 				_:
 					pass
@@ -352,6 +364,8 @@ func updateLayout():
 		var word = allWords[ind] as WordButton
 		rowItems.append(word)
 		word.global_position = currentCaret + lineStart
+		if (word.isPunctuation):
+			word.global_position.x -= idealHoriSpacing
 		#print("Word is: "+str(word.word)+" and the pos is: "+str(word.global_position))
 		tSize = word.size
 		
@@ -364,6 +378,7 @@ func updateLayout():
 			rowItems = []
 		else:
 			currentCaret[0] += tSize[0] + idealHoriSpacing
+				
 			if (currentCaret[0] > idealLineWidth):
 				currentCaret[0] = -idealLineWidth/2
 				currentCaret[1] += idealVertiSpacing
