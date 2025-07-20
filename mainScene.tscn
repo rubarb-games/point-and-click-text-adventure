@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bciahps44uc2k" path="res://Assets/thehandofbell.png" id="4_ykwv5"]
 [ext_resource type="Script" uid="uid://bt442yvrgc82s" path="res://the_hand_of_bell.gd" id="5_nlk40"]
 [ext_resource type="Material" uid="uid://db50lk46k2a2g" path="res://Assets/GlitchMaterial.tres" id="5_s7pqw"]
-[ext_resource type="PackedScene" path="res://word_popup.tscn" id="5_u7har"]
+[ext_resource type="PackedScene" uid="uid://dvuv56kanegeb" path="res://word_popup.tscn" id="5_u7har"]
 [ext_resource type="Script" uid="uid://bwrexjg2qurq2" path="res://debug_manager.gd" id="6_us837"]
 [ext_resource type="Script" uid="uid://cr1kq66s0cxvc" path="res://sprite_iris.gd" id="6_ykwv5"]
 [ext_resource type="PackedScene" uid="uid://bcj31424m7kul" path="res://sprite_iris.tscn" id="7_nlk40"]
@@ -150,10 +150,10 @@ spriteScene = ExtResource("7_nlk40")
 
 [node name="WordPopup" parent="." instance=ExtResource("5_u7har")]
 layout_mode = 0
-offset_left = 67.6699
-offset_top = 66.055
-offset_right = 107.67
-offset_bottom = 106.055
+offset_left = 613.0
+offset_top = 50.0
+offset_right = 653.0
+offset_bottom = 90.0
 
 [node name="DebugManager" type="Control" parent="." node_paths=PackedStringArray("debugHandle", "debugHandle2", "debugHandle3")]
 visible = false
@@ -208,7 +208,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="StoryManager2" type="Control" parent="." node_paths=PackedStringArray("centerTextMarkerHandle")]
+[node name="StoryManager2" type="Control" parent="." node_paths=PackedStringArray("centerTextMarkerHandle", "locationTextHandle")]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -216,6 +216,7 @@ mouse_filter = 2
 script = ExtResource("11_nlk40")
 csvPath = "res://Assets/Lacuna_script_a.csv"
 centerTextMarkerHandle = NodePath("../CenterTextMarker")
+locationTextHandle = NodePath("../TextAreaGuide/Control/LocationText")
 
 [node name="TextManager" type="Control" parent="." node_paths=PackedStringArray("textAreaHandle", "textAreaGuide", "InventoryManagerHandle", "storyManagerHandle", "lastCommandText", "centerTextMarkerHandle")]
 anchors_preset = 0
@@ -306,10 +307,10 @@ horizontal_alignment = 1
 
 [node name="Inventory_HBox" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox/Control"]
 anchors_preset = 0
-offset_left = 6.0
-offset_top = -70.0
-offset_right = 365.0
-offset_bottom = 103.0
+offset_left = 24.0
+offset_top = -110.0
+offset_right = 383.0
+offset_bottom = 63.0
 size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="Control" parent="InventoryControl/MarginContainer/BottomSpace_HBox"]
@@ -369,10 +370,10 @@ position = Vector2(640, 360)
 
 [node name="CenterTextMarker" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 625.0
-offset_top = 71.0
-offset_right = 665.0
-offset_bottom = 111.0
+offset_left = 647.0
+offset_top = 58.0
+offset_right = 687.0
+offset_bottom = 98.0
 mouse_filter = 2
 
 [node name="CenterCommandMarker" type="Control" parent="."]
@@ -389,8 +390,8 @@ anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -273.0
-offset_bottom = -5.0
+offset_top = -255.0
+offset_bottom = 13.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -410,13 +411,34 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -48.5
-offset_right = 48.5
-offset_bottom = 40.0
+offset_left = -48.0
+offset_top = 1.0
+offset_right = 49.0
+offset_bottom = 41.0
 grow_horizontal = 2
 mouse_filter = 2
 theme = ExtResource("13_uqts1")
 text = "LACUNA"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LocationText" type="RichTextLabel" parent="TextAreaGuide/Control"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = -35.0
+offset_right = 77.0
+offset_bottom = 5.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("13_uqts1")
+text = "- LOCATION -"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0

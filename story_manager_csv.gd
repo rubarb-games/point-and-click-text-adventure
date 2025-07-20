@@ -6,6 +6,7 @@ var story_data:Dictionary = {}
 @export var csvPath:String
 
 @export var centerTextMarkerHandle:Control
+@export var locationTextHandle:RichTextLabel
 
 var void_id:String = "void"
 
@@ -14,6 +15,7 @@ var currentRules:Dictionary = {}
 var currentID:String
 var currentText:String
 
+var goBackLastCommand:bool = false
 var cacheGoBack:bool = false
 var cachedChoice:String = ""
 
@@ -23,6 +25,9 @@ var genericChoices:Dictionary = {}
 var locationChoicesAvailable:bool = false
 var locationID:String = ""
 var locationChoices:Dictionary = {}
+var currentLocationChoices:Dictionary = {}
+
+var historyClearLocations:Array = []
 
 var undoQueue:Array[Dictionary] = []
 var visited_ids:Dictionary = {}
@@ -55,13 +60,13 @@ func load_csv(path:String):
 	var file = FileAccess.open(path, FileAccess.READ)
 	var lines = file.get_as_text().split("\n")
 	var header = lines[0].split(",")
-	print(header)
+	print_rich("[color=KHAKI]Header: "+str(header)+"[/color]\n")
 	
 	for i in range(lines.size()):
 		var line = lines[i].strip_edges()
 		if line == "":
 			continue
-		print(line)
+		print_rich("[color=OLIVE]"+str(line)+"[/color]\n")
 		var cells = line.split(",",false)
 		var row = {}
 		for j in range(min(cells.size(),header.size())):
@@ -73,9 +78,45 @@ func load_csv(path:String):
 		story_data[id] = row
 	return
 
+func parse_csv(text:String):
+	var result := []
+	var row := []
+	var cell := ""
+	var in_quotes := false
+	
+	for i in text.length():
+		var char := text[i]
+	
+		if char == '"':
+			if in_quotes and i + 1 < text.length() and text[i + 1] == '"':
+				cell += '"' # Escaped quote
+				i += 1
+			else:
+				in_quotes = !in_quotes
+		elif char == "," and not in_quotes:
+			row.append(cell)
+			cell = ""
+		elif (char == "\n" or char == "\r") and not in_quotes:
+			if cell != "" or row.size() > 0:
+				row.append(cell)
+				result.append(row)
+				row = []
+				cell = ""
+			# Handle \r\n
+			if char == '\r' and i + 1 < text.length() and text[i+1] == '\n':
+				i += 1
+		else:
+			cell += char
+	
+	if cell != "" or row.size() > 0:
+		row.append(cell)
+		result.append(row)
+		
+	return result
+
 func parse_choices(choices_str:String) -> Dictionary:
 	var choices = {}
-	print("Choices string: "+choices_str)
+	print_rich("[color=KHAKI]Choices string: "+choices_str+"[/color]")
 	for entry in choices_str.split(";"):
 		var parts = entry.strip_edges().split("=")
 		if (parts.size()==2):
@@ -100,7 +141,7 @@ func parse_rules(rules_str:String) -> Dictionary:
 
 func fetch_viable_choices(choicesDict:Dictionary):
 	var resultChoices = {}
-	print("Processing choices at ID \""+str(currentID)+"\" now...")
+	print_rich("[color=CORAL][font_size=26]Processing choices at ID \""+str(currentID)+"\" now...")
 	for c in choicesDict.keys():
 		print(c+" - "+str(choicesDict[c]))
 		var viableChoice = true
@@ -110,40 +151,48 @@ func fetch_viable_choices(choicesDict:Dictionary):
 			continue
 		
 		for r in choiceData["Rules"].keys():
-			if (r=="requiredVar"):
+			if (r.contains("requiredVar")):
 				var v = choiceData["Rules"][r]
-				var u = Global.getStoryVar(v["name"])
+				var u:int = int(Global.getStoryVar(v["name"]))
 				if (!u):
-					print("Choice removed. Variable \""+str(v["name"])+"\" has not been assigned")
+					print_rich("[color=CORAL]Choice removed. Variable \""+str(v["name"])+"\" has not been assigned")
 					viableChoice = false
-				elif (u != v["value"]):
-					print("Choice removed. Player does not possess variable \""+str(v["name"])+"\" at value: "+str(v["value"]))
+				elif (u != int(v["value"])):
+					print("[color=CORAL]Choice removed. Player does not possess variable \""+str(v["name"])+"\" at value: "+str(v["value"]))
 					viableChoice = false
 		if (viableChoice):
 			resultChoices[c] = choicesDict[c]
 		elif (choiceData["Rules"].has("fallbackID")):
-			print("Fallback: Adding fallback ID instead at \""+str(choiceData["Rules"]["fallbackID"])+"\"")
+			print_rich("[color=AQUA]Fallback: Adding fallback ID instead at \""+str(choiceData["Rules"]["fallbackID"]["name"])+"\" - [/color]")
 			resultChoices[c] = choiceData["Rules"]["fallbackID"]["name"]
 	return resultChoices
 	
-func show_node(id:String):
+func show_node(id:String, back:bool = false):
 	var node_id = get_node_data(id)
 	if (node_id):
+		print_rich("\n[color=YELLOW] Processing new node! [/color]")
 		store_visited_id(false)
 		currentText = node_id["Text"]
 		currentID = node_id["ID"]
-		print("ID: "+node_id["ID"]+" - TEXT:"+node_id["Text"])
-		print("CHOICES:")
+		print_rich("\n[color=GOLD]ID: "+node_id["ID"]+" - TEXT:"+node_id["Text"]+"\n")
+		print_rich("\n[color=GOLD] Choices are:\n "+str(node_id["Choices"])+" [/color]\n")
 		for label in node_id["Choices"].keys():
 			print(" - ", label, "=>", node_id["Choices"][label])
 		var tempChoices = node_id["Choices"].duplicate()
 		currentChoices = fetch_viable_choices(tempChoices)
+		currentLocationChoices = fetch_viable_choices(locationChoices)
 				
-		print("Choices are now processed")
 		currentRules = node_id["Rules"].duplicate()
+		print_rich("\n[color=GOLD] Rules are:\n "+str(currentRules)+" [/color]\n")
+		
+		if (back):
+			goBackLastCommand = true
+		else:
+			goBackLastCommand = false
 		
 		Global.StoryProgressed.emit()
 		Global.CommandMade.emit(node_id["Title"])
+		print_rich("[color=YELLOW] Node is now processed! [/color]\n")
 
 func get_node_data(id:String):
 	var node = story_data.get(id)
@@ -181,7 +230,8 @@ func store_visited_id(addToUndoQueue:bool = true,overrideID:String = ""):
 		var tmpUndo = {
 			"ID": currentID,
 			"locChoices":locationChoices,
-			"locID":locationID
+			"locID":locationID,
+			"rules":currentRules
 		}
 		undoQueue.append(tmpUndo)
 		
@@ -204,20 +254,36 @@ func go_back():
 		var gotoID:Dictionary = undoQueue.pop_back()
 		Global.TextPopup.emit("You go back...",centerTextMarkerHandle.global_position)
 		#Update location to previous spot
-		locationChoices = gotoID["locChoices"]
+		locationChoices = fetch_viable_choices(gotoID["locChoices"])
+		#locationChoices = gotoID["locChoices"]
+		if (locationID != gotoID["locID"]):
+			updateLocationText()
 		locationID = gotoID["locID"]
-		show_node(gotoID["ID"])
+		print_rich("[font_size=32][color=CORAL] GOING BACK")
+		show_node(gotoID["ID"], true)
 
 func OnGoBack():
 	cacheGoBack = true
 	#go_back()
+	
+func updateLocationText(hidden:bool = false):
+	var s = SimonTween.new()
+	#locationTextHandle.modulate.a = 1
+	await s.createTween(locationTextHandle,"modulate:a",-1,Global.shortPause).tweenDone
+	locationTextHandle.modulate.a = 0
+	if (hidden):
+		locationTextHandle.text = ""
+	else:
+		locationTextHandle.text = "- "+locationID+" -"
+	await s.createTween(locationTextHandle,"modulate:a",1,Global.shortPause).tweenDone
+	locationTextHandle.modulate.a = 1
 
 func OnMakeChoice(id:String,type:String):
 	match type:
 		"normal":
 			cachedChoice = currentChoices[id]
 		"location":
-			cachedChoice = locationChoices[id]
+			cachedChoice = currentLocationChoices[id]
 		"generic":
 			cachedChoice = genericChoices[id]
 		"hint":
@@ -247,7 +313,7 @@ func get_all_choices(includeLocations:bool = true):
 	var tmpGenericChoices = genericChoices.duplicate()
 	var tmpSpecialChoices = specialChoices.duplicate()
 	
-	if (locationChoicesAvailable):
+	if (locationChoicesAvailable and includeLocations):
 		allChoiceDict.merge(tmpLocationChoices)
 	if (genericChoicesAvailable):
 		allChoiceDict.merge(tmpGenericChoices)
@@ -258,6 +324,9 @@ func get_all_choices(includeLocations:bool = true):
 func OnRuleEncountered(rule:String):
 	match rule:
 		"ClearHistory":
+			if (historyClearLocations.find(currentID) != -1):
+				return
+			historyClearLocations.append(currentID)
 			print("RULE: CLEARING HISTORY!")
 			undoQueue = []
 		"Generic":
@@ -265,7 +334,7 @@ func OnRuleEncountered(rule:String):
 			genericChoices = currentChoices.duplicate()
 			genericChoicesAvailable = true
 		"NoLocationCommands":
-			print("RULE! REMOVING LOCATION COMMANDS")
+			print_rich("[font_size=40][color=GREEN]RULE! REMOVING LOCATION COMMANDS")
 			locationChoicesAvailable = false
 		#"SetVariable":
 			
@@ -276,16 +345,17 @@ func OnSetStoryVariable():
 func loc_available():
 	return locationChoicesAvailable
 
-func OnLocationEncountered(location:String):
+func OnLocationEncountered(location:String, hidden:bool = false):
 	print("RULE! ADDING LOCATION CHOICES")
 	locationChoicesAvailable = true
 	if (locationID == location):
 		return
 		
 	var tmpLocData:Dictionary = get_node_data(currentID)
+	updateLocationText(hidden)
 	if tmpLocData:
 		locationID = location
 		var tmpChoices = tmpLocData["Choices"].duplicate()
-		locationChoices = fetch_viable_choices(tmpChoices)
+		locationChoices = tmpChoices#fetch_viable_choices(tmpChoices)
 	else:
 		locationChoicesAvailable = false

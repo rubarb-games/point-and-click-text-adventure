@@ -102,9 +102,9 @@ func preProcessText(text):
 		else:
 			tmpCurrentString += a["content"] + " "
 		
-	print("LETS SEE IF WE CAN RECONSTRUCT THIS!!!!!!")
-	print(tmpCurrentString)
-	print("AND THAT WAS IT!!!")
+	#print("LETS SEE IF WE CAN RECONSTRUCT THIS!!!!!!")
+	#print(tmpCurrentString)
+	#print("AND THAT WAS IT!!!")
 	return tmpCurrentString
 
 func processRules():
@@ -113,10 +113,16 @@ func processRules():
 			#print(str(lab["name"])+"   - This be a label!!!!!")
 			match lab:
 				"location":
-					Global.LocationEncountered.emit(currentRules[lab]["name"])
+					print_rich("[color=GREEN] Location encountered: "+str(currentRules[lab]["name"])+"[/color]")
+					Global.LocationEncountered.emit(currentRules[lab]["name"], false)
+				"locationHidden":
+					print_rich("[color=WEB_GREEN] Hidden location encountered: "+str(currentRules[lab]["name"])+"[/color]")
+					Global.LocationEncountered.emit(currentRules[lab]["name"],true)
 				"rule":
+					print_rich("[color=PINK] Rule encountered: "+str(currentRules[lab]["name"])+"[/color]")
 					Global.RuleEncountered.emit(currentRules[lab]["name"])
-				"setVar":
+				"setVar","setVar1","setVar2","setVar3","setVar4":
+					print_rich("[font_size=40][color=RED] Setting variable: "+str(currentRules[lab]["name"])+" With value: "+str(currentRules[lab]["value"])+"[/color]")
 					Global.storyVariables[currentRules[lab]["name"]] = currentRules[lab]["value"]
 
 func dumpText(alsoProgress:bool = true):
@@ -205,7 +211,7 @@ func processTextRegex():
 				}
 			"punct":
 				var content = m["content"]
-				print("Hell yeah punctuation.. "+str(content))
+				#print("Hell yeah punctuation.. "+str(content))
 				entry = {
 					"type": "punct",
 					"word": m["content"],
@@ -260,7 +266,10 @@ func processTextRegex():
 					butt.setGlitched()
 					pass
 				"redactedB":
-					butt.setDemon()
+					if (!checkIfWordIsDiscovered(wD.word)):
+						butt.setDemon()
+					else:
+						butt.setNormalDemon()
 					pass
 				_:
 					pass
@@ -301,6 +310,8 @@ func processText():
 					tWord.status = WordData.wordStatus.NOUN
 				"verb":
 					tWord.status = WordData.wordStatus.VERB
+				"redactedB":
+					tWord.status = WordData.wordStatus.NOUN
 			tWord.isDiscoverable = true
 			w = tw[1]
 		

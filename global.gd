@@ -50,5 +50,5 @@ var crazyLongPause:float = 5.0
 func getStoryVar(key:String):
 	if (storyVariables.has(key)):
 		return storyVariables[key]
-	return null
+	return -1
 	

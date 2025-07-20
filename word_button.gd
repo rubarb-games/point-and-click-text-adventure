@@ -1,7 +1,7 @@
 class_name WordButton
 extends Control
 
-enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, GLITCHED, DEMON, PUNCTUATION, DISABLED }
+enum buttonStatus { TEXTLOG_NORMAL, TEXTLOG_INTERACTIBLE, INVENTORY, COMMAND, GLITCHED, DEMON, DEMON_INTERACTIVE, PUNCTUATION, DISABLED }
 var bS:buttonStatus
 
 @export var buttonHandle:RichTextLabel
@@ -30,6 +30,7 @@ var highlightedColor:Color = Color.WHITE
 @export var mutedColor:Color = Color.DIM_GRAY
 @export var specialColor:Color = Color.DARK_KHAKI
 @export var disabledColor:Color = Color(0.2,0.2,0.2,1)
+@export var semiMutedColor:Color = Color.DIM_GRAY
 var previousColor:Color
 
 var isPunctuation:bool = false
@@ -64,7 +65,7 @@ func _process(delta):
 			for a in word.length():
 				tmpWord += glitchedEffects[randi() % glitchedEffects.size()] + glitchedCharacters[randi() % glitchedCharacters.size()]
 			updateWordText(tmpWord,true)
-		buttonStatus.DEMON:
+		buttonStatus.DEMON, buttonStatus.DEMON_INTERACTIVE:
 			var tmpWord = ""
 			for a in word.length():
 				tmpWord += glitchedEffectsMild[randi() % glitchedEffectsMild.size()] + word[a]#+ glitchedCharacters[randi() % glitchedCharacters.size()]
@@ -163,6 +164,10 @@ func setMutedColor():
 	defaultColor = mutedColor
 	buttonHandle.self_modulate = mutedColor
 
+func setSemiMutedColor():
+	defaultColor = semiMutedColor
+	buttonHandle.self_modulate = semiMutedColor
+
 func setSpecialColor():
 	defaultColor = specialColor
 	buttonHandle.self_modulate = specialColor
@@ -181,7 +186,13 @@ func setGlitched():
 	bS = buttonStatus.GLITCHED
 	
 func setDemon():
+	bS = buttonStatus.DEMON_INTERACTIVE
+	#bS = buttonStatus.TEXTLOG_INTERACTIBLE
+	defaultColor = Color.RED
+
+func setNormalDemon():
 	bS = buttonStatus.DEMON
+	#bS = buttonStatus.TEXTLOG_INTERACTIBLE
 	defaultColor = Color.RED
 	
 func setPunctuation():
@@ -205,6 +216,11 @@ func OnClicked():
 				print("And it's discoverable??")
 				makeNormal()
 				Global.InteractableWordClicked.emit(word,self)
+		buttonStatus.DEMON_INTERACTIVE:
+			if (active):
+				print("And it's discoverable??")
+				setNormalDemon()
+				Global.InteractableWordClicked.emit(word,self)
 		buttonStatus.INVENTORY:
 			print("And its an inventory item")
 			Global.InventoryInteractibleClicked.emit(word,self)
@@ -224,6 +240,7 @@ func moveButtonToLocation(goalObjectHandle:Node, deleteAtEnd:bool = true, fadeGo
 		goalObjectHandle.modulate.a = 0
 		u.createTween(goalObjectHandle,"modulate:a",1,0.4,fadeCurve)
 	await s.createTween(self,"global_position",distanceDelta,0.4).anotherParallel().createTween(self,"modulate:a",-1,0.4,fadeCurve).tweenDone
+	self.global_position = goalObjectHandle.global_position
 	
 	if (deleteAtEnd):
 		deleteObject()

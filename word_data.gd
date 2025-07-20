@@ -27,6 +27,9 @@ func evaluateType(wDict:Dictionary):
 		"redacted":
 			status = wordStatus.GLITCHED
 			return true
+		"redactedB":
+			status = wordStatus.NOUN
+			return true
 		"variable":
 			pass
 			return false

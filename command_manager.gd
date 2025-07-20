@@ -84,7 +84,7 @@ func executeCommand():
 		Global.StoryChoiceMade.emit(tempWord,"hint")
 	else:
 		print("TESTING SECONDARY CHOICES")
-		if storyManagerHandle.locationChoices.has(tempWord) and storyManagerHandle.locationChoicesAvailable and !commandFound:
+		if storyManagerHandle.currentLocationChoices.has(tempWord) and storyManagerHandle.locationChoicesAvailable and !commandFound:
 			commandFound = true
 			Global.StoryPartialProgressed.emit(tempWord,"back")
 			Global.StoryChoiceMade.emit(tempWord,"location")
@@ -209,11 +209,12 @@ func updateLayout():
 		if (verbRepresented):
 			smallWordHandle.position.x = currentVerb.position.x + currentVerb.size.x + horiSpacing
 			smallWordHandle.modulate.a = 0
-			var s = SimonTween.new()
-			s.createTween(smallWordHandle,"modulate:a",1,Global.shortPause)
 			nounTargetPos.x = smallWordHandle.position.x + smallWordHandle.size.x + horiSpacing
 			var k = SimonTween.new()
 			k.createTween(currentNoun,"position",nounTargetPos - currentNoun.position,Global.shortPause)
+			var s = SimonTween.new()
+			await s.createTween(smallWordHandle,"modulate:a",1,Global.shortPause).tweenDone
+			smallWordHandle.modulate.a = 1
 		else:
 			nounTargetPos.x = margin
 			fadeOutMiniWord = true
@@ -237,6 +238,8 @@ func chooseSmallWord():
 			smallWordHandle.updateWordText("to")
 		"listen":
 			smallWordHandle.updateWordText("to")
+		"sleep":
+			smallWordHandle.updateWordText("in")
 		_:
 			smallWordHandle.updateWordText("")
 
